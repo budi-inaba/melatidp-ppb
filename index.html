@@ -37,10 +37,13 @@
 <body class="bg-gray-50 min-h-screen font-sans text-gray-800">
 
     <nav class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-center items-center">
-            <div class="flex items-center gap-2 font-bold text-xl">
-                <i data-lucide="package" class="w-7 h-7"></i>
-                <span>Sistem PPB Terpadu</span>
+        <div class="max-w-4xl mx-auto px-4 py-6 flex flex-col items-center gap-3">
+            <!-- LOGO RPTRA DI POSISI PALING ATAS -->
+            <img src="logo-rptra.png" alt="Logo RPTRA" class="h-20 w-auto object-contain brightness-0 invert" onerror="this.style.display='none';">
+            
+            <div class="flex flex-col items-center text-center">
+                <span class="font-bold text-xl tracking-tight">Sistem PPB Terpadu</span>
+                <span class="text-xs font-light opacity-80 uppercase tracking-widest">RPTRA Melati Duri Pulo</span>
             </div>
         </div>
     </nav>
@@ -49,11 +52,6 @@
 
         <!-- VIEW: PENDAFTARAN -->
         <div id="view-form" class="fade-in">
-            <!-- LOGO RPTRA POSITION -->
-            <div class="flex justify-center mb-6">
-                <img src="logo-rptra.png" alt="Logo RPTRA" class="h-24 w-auto object-contain" onerror="this.style.display='none'; console.warn('logo-rptra.png tidak ditemukan');">
-            </div>
-
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
                 <div class="text-center mb-8">
                     <h1 class="text-2xl font-bold text-gray-900">Formulir Pendaftaran</h1>
@@ -74,7 +72,7 @@
                             <input type="text" id="kelurahan" required 
                                 oninput="validateLetters(this)"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-                                placeholder="Masukkan nama kelurahan (Hanya huruf)">
+                                placeholder="Masukkan nama kelurahan">
                         </div>
 
                         <!-- No KK -->
@@ -89,7 +87,7 @@
                             <input type="text" id="nama_pengisi" required 
                                 oninput="validateLetters(this)"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-                                placeholder="Masukkan nama lengkap (Hanya huruf)">
+                                placeholder="Masukkan nama lengkap">
                         </div>
 
                         <!-- No. KTP -->
@@ -104,7 +102,7 @@
                             <input type="text" id="nama" required 
                                 oninput="validateLetters(this)"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-                                placeholder="Sesuai nama di kartu (Hanya huruf)">
+                                placeholder="Sesuai nama di kartu">
                         </div>
 
                         <!-- No. Kartu ATM -->
@@ -140,167 +138,78 @@
                     </div>
 
                     <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 px-4 rounded-xl hover:bg-blue-700 transition flex justify-center items-center gap-2 shadow-lg active:scale-95">
-                        <i data-lucide="check-circle" class="w-6 h-6"></i> Kirim Pendaftaran
+                        <i data-lucide="send" class="w-5 h-5"></i> Kirim Pendaftaran
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- VIEW: TIKET -->
+        <!-- VIEW: TIKET (HASIL PENDAFTARAN) -->
         <div id="view-tiket" class="hidden fade-in max-w-md mx-auto">
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
-                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="check" class="w-8 h-8"></i>
+            <!-- TICKET UI -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+                <div class="bg-blue-600 p-6 text-white text-center">
+                    <img src="logo-rptra.png" alt="Logo RPTRA" class="h-12 w-auto mx-auto mb-3 brightness-0 invert" onerror="this.style.display='none';">
+                    <h2 class="text-xl font-bold">Bukti Pendaftaran</h2>
+                    <p class="text-xs opacity-80">RPTRA Melati Duri Pulo</p>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-1">Terdaftar!</h2>
-                <p class="text-gray-500 mb-6 text-sm">Simpan/Screenshot kode ini untuk verifikasi petugas.</p>
                 
-                <div class="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-200 mb-6 flex flex-col items-center">
-                    <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-100"></div>
+                <div class="p-8 text-center">
+                    <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-100 flex justify-center"></div>
                     <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-1">ID Transaksi</p>
-                    <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700 mb-4">PPB-XXXX</p>
+                    <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700 mb-6">PPB-XXXX</p>
                     
-                    <!-- KOMODITAS TERPILIH -->
-                    <div class="w-full border-t border-gray-200 pt-3 mt-1 mb-4">
-                        <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-2">Komoditas Dipilih</p>
-                        <div id="tiket-produk-list" class="flex flex-wrap justify-center gap-1.5 px-2 text-xs font-bold text-blue-700">
-                            <!-- Komoditas akan muncul di sini -->
+                    <div class="text-left bg-gray-50 p-4 rounded-xl text-sm border border-gray-100 space-y-2 mb-6">
+                        <div class="flex justify-between"><span>Waktu:</span> <span id="tiket-waktu" class="font-bold"></span></div>
+                        <div class="flex justify-between"><span>Kategori:</span> <span id="tiket-kategori" class="font-bold"></span></div>
+                        <div class="flex justify-between"><span>Pemilik ATM:</span> <span id="tiket-nama" class="font-bold"></span></div>
+                        <div class="flex justify-between"><span>No. KTP:</span> <span id="tiket-nik" class="font-bold"></span></div>
+                        <div class="border-t pt-2">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold">Komoditas:</span>
+                            <div id="tiket-produk-list" class="flex flex-wrap gap-1 mt-1 text-xs font-bold text-blue-700"></div>
                         </div>
                     </div>
 
-                    <!-- LOKASI PENGAMBILAN -->
-                    <div class="w-full border-t border-gray-200 pt-3">
-                        <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-2">Lokasi Pengambilan</p>
-                        <div class="text-gray-700 text-sm leading-relaxed">
-                            <p class="font-black text-blue-800">RPTRA Melati Duri Pulo</p>
-                            <p>Jl. Petojo Barat XI No. 5 RT. 012 RW. 001</p>
-                            <p>Kelurahan Duri Pulo - Kecamatan Gambir</p>
-                            <p>Jakarta Pusat</p>
-                        </div>
-                    </div>
+                    <button onclick="resetForm()" class="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition text-sm">
+                        Kembali ke Beranda
+                    </button>
                 </div>
-
-                <div class="text-left bg-blue-50 p-4 rounded-xl text-sm text-blue-900 mb-6 border border-blue-100 space-y-1">
-                    <div class="flex justify-between text-green-600"><span>Waktu:</span> <span id="tiket-waktu" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>Kategori:</span> <span id="tiket-kategori" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>Pemilik ATM:</span> <span id="tiket-nama" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>No. Kartu ATM:</span> <span id="tiket-no-atm" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>No. KTP:</span> <span id="tiket-nik" class="font-bold"></span></div>
-                    <div class="flex justify-between border-t mt-1 pt-1"><span>Pengisi Form:</span> <span id="tiket-pengisi" class="font-bold"></span></div>
-                </div>
-
-                <button onclick="resetForm()" class="w-full border-2 border-blue-600 text-blue-600 font-bold py-3 rounded-xl hover:bg-blue-50 transition text-sm">
-                    Buat Baru
-                </button>
             </div>
         </div>
 
         <!-- VIEW: VERIFIKASI ADMIN -->
         <div id="view-verifikasi" class="hidden fade-in max-w-md mx-auto">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6">
-                <h1 class="text-lg font-bold mb-6 text-center text-gray-800 flex items-center justify-center gap-2">
-                    <i data-lucide="shield-check" class="text-blue-600"></i> Verifikasi Pengambilan
+                <h1 class="text-lg font-bold mb-6 text-center text-gray-800 flex flex-col items-center gap-2">
+                    <img src="logo-rptra.png" alt="Logo RPTRA" class="h-12 w-auto mb-1" onerror="this.style.display='none';">
+                    <span>Verifikasi Pengambilan</span>
                 </h1>
 
                 <div id="verifikasi-data" class="hidden">
                     <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-4 text-sm mb-6 relative overflow-hidden">
                         <div id="watermark-status" class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none text-3xl font-black rotate-[-30deg]"></div>
-
+                        <!-- Data fields same as before -->
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">ID Pesanan</span>
-                                <span id="v-id" class="font-mono text-blue-700 font-bold"></span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Kategori</span>
-                                <span id="v-kategori" class="font-bold text-blue-600"></span>
-                            </div>
+                            <div class="flex flex-col"><span class="text-gray-400 text-[10px] uppercase font-bold">ID Pesanan</span><span id="v-id" class="font-mono text-blue-700 font-bold"></span></div>
+                            <div class="flex flex-col"><span class="text-gray-400 text-[10px] uppercase font-bold">Kategori</span><span id="v-kategori" class="font-bold"></span></div>
                         </div>
-                        <div class="flex flex-col">
-                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Nama Pemilik ATM</span>
-                            <span id="v-nama" class="font-bold text-gray-800 text-base"></span>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">No. Kartu ATM</span>
-                            <span id="v-no-atm" class="font-mono font-bold text-blue-600"></span>
-                        </div>
-                        <div class="flex flex-col border-b pb-2">
-                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Nama Pengisi Form</span>
-                            <span id="v-nama-pengisi" class="font-medium text-gray-700"></span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">No. KTP</span>
-                                <span id="v-nik" class="font-mono"></span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Kelurahan</span>
-                                <span id="v-kelurahan" class="font-medium"></span>
-                            </div>
-                        </div>
-                        <div class="pt-2 border-t">
-                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest block mb-2">Komoditas:</span>
-                            <div id="v-produk" class="flex flex-wrap gap-2"></div>
-                        </div>
+                        <div class="flex flex-col"><span class="text-gray-400 text-[10px] uppercase font-bold">Nama Pemilik ATM</span><span id="v-nama" class="font-bold text-gray-800 text-base"></span></div>
+                        <div class="flex flex-col border-b pb-2"><span class="text-gray-400 text-[10px] uppercase font-bold">No. Kartu ATM</span><span id="v-no-atm" class="font-mono"></span></div>
+                        <div id="v-produk" class="flex flex-wrap gap-2 pt-2"></div>
                     </div>
 
-                    <button id="btn-approve" onclick="approvePesanan()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg text-lg flex justify-center items-center gap-2">
-                        <i data-lucide="check-circle"></i> Selesai / Serahkan
+                    <button id="btn-approve" onclick="approvePesanan()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg">
+                        Konfirmasi Penyerahan
                     </button>
                     
-                    <button onclick="window.location.href = window.location.pathname" class="w-full mt-4 text-gray-400 text-xs py-2 hover:text-gray-600 transition">
-                        Batal & Kembali ke Utama
-                    </button>
+                    <button onclick="window.location.href = window.location.pathname" class="w-full mt-4 text-gray-400 text-xs py-2">Batal</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- MODAL ERROR -->
-        <div id="modal-error" class="hidden fixed inset-0 bg-black/40 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl scale-in border-t-4 border-red-500">
-                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="alert-circle" class="w-8 h-8"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Terjadi Kesalahan</h3>
-                <p id="form-error-msg" class="text-gray-600 text-sm mb-6 leading-relaxed">Pesan kesalahan akan muncul di sini.</p>
-                <button onclick="closeModal('modal-error')" class="w-full bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition active:scale-95 shadow-lg">
-                    Mengerti
-                </button>
-            </div>
-        </div>
-
-        <!-- POPUP SUKSES -->
-        <div id="popup-verifikasi" class="hidden fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-md">
-            <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl scale-in border-t-8 border-green-500">
-                <div class="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                    <i data-lucide="check-check" class="w-10 h-10"></i>
-                </div>
-                <h2 class="text-2xl font-black mb-2 text-gray-900">TRANSAKSI SELESAI</h2>
-                <p class="text-gray-500 mb-8 text-sm leading-relaxed">Data pendaftaran telah berhasil diverifikasi dan diserahkan.</p>
-                <button onclick="window.location.href = window.location.pathname" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition active:scale-95 shadow-xl">
-                    Tutup Halaman
-                </button>
-            </div>
-        </div>
-
-        <!-- NOTIFIKASI INVALID -->
-        <div id="modal-invalid" class="hidden fixed inset-0 bg-black/40 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl scale-in border-t-4 border-gray-500">
-                <div class="w-16 h-16 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="x-circle" class="w-8 h-8"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Kode Tidak Valid</h3>
-                <p class="text-gray-600 text-sm mb-6">Data pendaftaran tidak ditemukan atau sudah kadaluarsa.</p>
-                <button onclick="window.location.href = window.location.pathname" class="w-full bg-gray-800 text-white py-3 rounded-xl font-bold">
-                    Kembali
-                </button>
             </div>
         </div>
 
     </main>
 
     <script>
-        // Fungsi Validasi: Menghapus selain huruf dan spasi
         function validateLetters(input) {
             input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
         }
@@ -335,16 +244,6 @@
             }
         }
 
-        function showError(msg) {
-            const el = document.getElementById('form-error-msg');
-            if(el) el.textContent = msg;
-            document.getElementById('modal-error').classList.remove('hidden');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-
         function renderProduk() {
             const container = document.getElementById('container-produk');
             const kategoriPenerima = document.getElementById('kategori_penerima').value;
@@ -356,7 +255,7 @@
                 const div = document.createElement('div');
                 div.className = `border-2 border-gray-100 rounded-xl p-4 flex items-center gap-4 transition bg-white hover:border-blue-400 cursor-pointer group`;
                 div.innerHTML = `
-                    <input type="checkbox" name="produk" value="${item.id}" class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <input type="checkbox" name="produk" value="${item.id}" class="w-5 h-5 rounded border-gray-300 text-blue-600">
                     <div class="flex-1">
                         <p class="font-bold text-gray-800 text-sm group-hover:text-blue-700 transition">${item.nama}</p>
                         <p class="text-xs text-blue-500 font-bold">${item.harga}</p>
@@ -373,12 +272,8 @@
 
         function getFormattedDate() {
             const now = new Date();
-            const d = String(now.getDate()).padStart(2, '0');
-            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const m = months[now.getMonth()];
-            const y = now.getFullYear();
-            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
-            return `${d} ${m} ${y}, ${time}`;
+            return now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ', ' + 
+                   now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
         }
 
         function handlePendaftaran(e) {
@@ -394,10 +289,7 @@
                 return KOMODITAS_LIST.find(k => k.id === c.value).nama;
             });
 
-            if(nik.length < 16) { showError("No. KTP harus 16 digit."); return; }
-            if(no_kk.length < 16) { showError("No. KK harus 16 digit."); return; }
-            if(no_atm.length < 16) { showError("No. Kartu ATM harus 16 digit."); return; }
-            if(prod.length === 0) { showError("Pilih minimal 1 jenis komoditas."); return; }
+            if(prod.length === 0) return alert("Pilih minimal 1 komoditas.");
 
             const id = `PPB-${Math.floor(1000 + Math.random() * 9000)}`;
             const waktuSekarang = getFormattedDate();
@@ -409,8 +301,6 @@
             document.getElementById('tiket-id').textContent = id;
             document.getElementById('tiket-nama').textContent = nama;
             document.getElementById('tiket-kategori').textContent = kategori;
-            document.getElementById('tiket-no-atm').textContent = no_atm;
-            document.getElementById('tiket-pengisi').textContent = nama_pengisi;
             document.getElementById('tiket-nik').textContent = nik;
             document.getElementById('tiket-waktu').textContent = waktuSekarang;
 
@@ -418,12 +308,14 @@
             prodList.innerHTML = '';
             prod.forEach(p => {
                 const item = document.createElement('span');
-                item.textContent = `• ${p}`;
+                item.className = "bg-blue-50 px-2 py-0.5 rounded";
+                item.textContent = p;
                 prodList.appendChild(item);
             });
 
             generateQR(id);
             if (window.lucide) lucide.createIcons();
+            window.scrollTo(0, 0);
         }
 
         function generateQR(id) {
@@ -431,66 +323,44 @@
             container.innerHTML = '';
             let urlBase = window.location.href.split('?')[0];
             const finalUrl = `${urlBase}?verify=${id}`;
-            new QRCode(container, { text: finalUrl, width: 220, height: 220, colorDark : "#1e3a8a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
+            new QRCode(container, { text: finalUrl, width: 200, height: 200, colorDark : "#1e3a8a" });
         }
 
         function resetForm() {
-            document.getElementById('form-pendaftaran').reset();
-            document.getElementById('view-tiket').classList.add('hidden');
-            document.getElementById('view-form').classList.remove('hidden');
-            renderProduk(); 
-            if (window.lucide) lucide.createIcons();
+            window.location.href = window.location.pathname;
         }
 
         function autoVerify(id) {
             const pesanan = getPesanan().find(p => p.id === id.toUpperCase());
-            const res = document.getElementById('verifikasi-data');
+            if (!pesanan) return;
             
             document.getElementById('view-form').classList.add('hidden');
             document.getElementById('view-verifikasi').classList.remove('hidden');
 
-            if (!pesanan) {
-                document.getElementById('modal-invalid').classList.remove('hidden');
-            } else {
-                pesananAktif = pesanan;
-                res.classList.remove('hidden');
-                document.getElementById('v-id').textContent = pesanan.id;
-                document.getElementById('v-nama').textContent = pesanan.nama;
-                document.getElementById('v-no-atm').textContent = pesanan.no_atm;
-                document.getElementById('v-kategori').textContent = pesanan.kategori;
-                document.getElementById('v-nama-pengisi').textContent = pesanan.nama_pengisi || '-';
-                document.getElementById('v-kelurahan').textContent = pesanan.kelurahan;
-                document.getElementById('v-nik').textContent = pesanan.nik;
-                
-                const prodContainer = document.getElementById('v-produk');
-                prodContainer.innerHTML = '';
-                pesanan.produkNama.forEach(n => { 
-                    const span = document.createElement('span'); 
-                    span.className = "bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-blue-200";
-                    span.textContent = n; 
-                    prodContainer.appendChild(span); 
-                });
-                
-                const wm = document.getElementById('watermark-status');
-                const btn = document.getElementById('btn-approve');
-                if(pesanan.status === 'Selesai') {
-                    btn.classList.add('hidden');
-                    wm.textContent = "SUDAH DIAMBIL";
-                    wm.className = "absolute inset-0 flex items-center justify-center opacity-20 text-3xl font-black text-green-600 rotate-[-30deg]";
-                } else {
-                    btn.classList.remove('hidden');
-                    wm.textContent = "VALID";
-                    wm.className = "absolute inset-0 flex items-center justify-center opacity-10 text-3xl font-black text-blue-600 rotate-[-30deg]";
-                }
-            }
+            pesananAktif = pesanan;
+            document.getElementById('verifikasi-data').classList.remove('hidden');
+            document.getElementById('v-id').textContent = pesanan.id;
+            document.getElementById('v-nama').textContent = pesanan.nama;
+            document.getElementById('v-no-atm').textContent = pesanan.no_atm;
+            document.getElementById('v-kategori').textContent = pesanan.kategori;
+            
+            const prodContainer = document.getElementById('v-produk');
+            prodContainer.innerHTML = '';
+            pesanan.produkNama.forEach(n => { 
+                const span = document.createElement('span'); 
+                span.className = "bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold";
+                span.textContent = n; 
+                prodContainer.appendChild(span); 
+            });
+            
             if (window.lucide) lucide.createIcons();
         }
 
         function approvePesanan() {
             if(!pesananAktif) return;
             updateStatusPesanan(pesananAktif.id, 'Selesai');
-            document.getElementById('popup-verifikasi').classList.remove('hidden');
-            if (window.lucide) lucide.createIcons();
+            alert("Berhasil Diverifikasi!");
+            window.location.href = window.location.pathname;
         }
 
         window.onload = () => {
