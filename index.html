@@ -63,24 +63,49 @@
                             <input type="text" id="kelurahan" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Masukkan nama kelurahan">
                         </div>
 
-                        <!-- No KK (Dipindahkan ke bawah Kelurahan) -->
+                        <!-- No KK -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. Kartu Keluarga (16 Digit)</label>
                             <input type="number" id="no_kk" required oninput="javascript: if (this.value.length > 16) this.value = this.value.slice(0, 16);" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="317101XXXXXXXXXX">
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
-                            <!-- NIK -->
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">NIK (16 Digit)</label>
-                                <input type="number" id="nik" required oninput="javascript: if (this.value.length > 16) this.value = this.value.slice(0, 16);" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="317101XXXXXXXXXX">
-                            </div>
+                        <!-- Nama Pengisi Form -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Pengisi Form</label>
+                            <input type="text" id="nama_pengisi" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Masukkan nama pengisi formulir">
+                        </div>
 
-                            <!-- Nama Lengkap Sesuai KTP -->
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Lengkap Sesuai KTP</label>
-                                <input type="text" id="nama" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Masukkan nama lengkap">
-                            </div>
+                        <!-- No. KTP -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. KTP (16 Digit)</label>
+                            <input type="number" id="nik" required oninput="javascript: if (this.value.length > 16) this.value = this.value.slice(0, 16);" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="317101XXXXXXXXXX">
+                        </div>
+
+                        <!-- Nama Pemilik Kartu ATM -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Pemilik Kartu ATM</label>
+                            <input type="text" id="nama" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Masukkan nama pemilik kartu ATM">
+                        </div>
+
+                        <!-- No. Kartu ATM -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. Kartu ATM (16 Digit)</label>
+                            <input type="number" id="no_atm" required oninput="javascript: if (this.value.length > 16) this.value = this.value.slice(0, 16);" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="6013XXXXXXXXXXXX">
+                        </div>
+
+                        <!-- Kategori Penerima -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Kategori Penerima</label>
+                            <select id="kategori_penerima" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                                <option value="" disabled selected>Pilih Kategori</option>
+                                <option value="KJP">KJP (Kartu Jakarta Pintar)</option>
+                                <option value="PJLP">PJLP (Penyedia Jasa Lainnya Perorangan)</option>
+                                <option value="Kartu Lansia">Kartu Lansia Jakarta (KLJ)</option>
+                                <option value="Kartu Disabilitas">Kartu Penyandang Disabilitas Jakarta (KPDJ)</option>
+                                <option value="Dasawisma">Dasawisma</option>
+                                <option value="KAJ">KAJ (Kartu Anak Jakarta)</option>
+                                <option value="Kartu Pekerja">Kartu Pekerja Jakarta (KPJ)</option>
+                            </select>
                         </div>
                     </div>
 
@@ -122,9 +147,11 @@
                 </div>
 
                 <div class="text-left bg-blue-50 p-4 rounded-xl text-sm text-blue-900 mb-6 border border-blue-100 space-y-1">
-                    <div class="flex justify-between"><span>Nama:</span> <span id="tiket-nama" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>No. KK:</span> <span id="tiket-kk" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>Kelurahan:</span> <span id="tiket-kelurahan" class="font-bold"></span></div>
+                    <div class="flex justify-between"><span>Kategori:</span> <span id="tiket-kategori" class="font-bold"></span></div>
+                    <div class="flex justify-between"><span>Pemilik ATM:</span> <span id="tiket-nama" class="font-bold"></span></div>
+                    <div class="flex justify-between"><span>No. Kartu ATM:</span> <span id="tiket-no-atm" class="font-bold"></span></div>
+                    <div class="flex justify-between"><span>No. KTP:</span> <span id="tiket-nik" class="font-bold"></span></div>
+                    <div class="flex justify-between border-t mt-1 pt-1"><span>Pengisi Form:</span> <span id="tiket-pengisi" class="font-bold"></span></div>
                 </div>
 
                 <button onclick="resetForm()" class="w-full border-2 border-blue-600 text-blue-600 font-bold py-3 rounded-xl hover:bg-blue-50 transition text-sm">
@@ -152,22 +179,30 @@
                                 <span id="v-id" class="font-mono text-blue-700 font-bold"></span>
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Kelurahan</span>
-                                <span id="v-kelurahan" class="font-medium"></span>
+                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Kategori</span>
+                                <span id="v-kategori" class="font-bold text-blue-600"></span>
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Nama Pemohon</span>
+                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Nama Pemilik ATM</span>
                             <span id="v-nama" class="font-bold text-gray-800 text-base"></span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">No. Kartu ATM</span>
+                            <span id="v-no-atm" class="font-mono font-bold text-blue-600"></span>
+                        </div>
+                        <div class="flex flex-col border-b pb-2">
+                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Nama Pengisi Form</span>
+                            <span id="v-nama-pengisi" class="font-medium text-gray-700"></span>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">NIK</span>
+                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">No. KTP</span>
                                 <span id="v-nik" class="font-mono"></span>
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">No. KK</span>
-                                <span id="v-kk" class="font-mono"></span>
+                                <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Kelurahan</span>
+                                <span id="v-kelurahan" class="font-medium"></span>
                             </div>
                         </div>
                         <div class="pt-2 border-t">
@@ -189,7 +224,7 @@
 
         <!-- Popup Sukses -->
         <div id="popup-verifikasi" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-md">
-            <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <div class="bg-white rounded-3xl p-8 max-sm w-full text-center shadow-2xl">
                 <div class="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <i data-lucide="check-check" class="w-10 h-10"></i>
                 </div>
@@ -204,12 +239,14 @@
     </main>
 
     <script>
+        // Daftar komoditas dengan urutan yang diminta sebelumnya
         const KOMODITAS_LIST = [
-            { id: 'beras', nama: 'Beras Premium 5Kg', harga: 'Rp 30.000' },
-            { id: 'telur', nama: 'Telur Ayam 1 Tray', harga: 'Rp 10.000' },
-            { id: 'susu', nama: 'Susu UHT 1 Karton', harga: 'Rp 30.000' },
+            { id: 'ayam', nama: 'Ayam 1 ekor', harga: 'Rp 8.000' },
             { id: 'daging', nama: 'Daging Sapi 1Kg', harga: 'Rp 35.000' },
-            { id: 'ayam', nama: 'Ayam Karkas 1 Ekor', harga: 'Rp 8.000' },
+            { id: 'telur', nama: 'Telur Ayam 1 Tray', harga: 'Rp 10.000' },
+            { id: 'beras', nama: 'Beras Premium 5Kg', harga: 'Rp 30.000' },
+            { id: 'ikan', nama: 'Ikan Kembung 1Kg', harga: 'Rp 13.000' },
+            { id: 'susu', nama: 'Susu UHT 1 Karton', harga: 'Rp 30.000' },
         ];
 
         let pesananAktif = null;
@@ -262,23 +299,29 @@
             const nik = document.getElementById('nik').value;
             const no_kk = document.getElementById('no_kk').value;
             const nama = document.getElementById('nama').value;
+            const no_atm = document.getElementById('no_atm').value;
+            const kategori = document.getElementById('kategori_penerima').value;
+            const nama_pengisi = document.getElementById('nama_pengisi').value;
             const prod = Array.from(document.querySelectorAll('input[name="produk"]:checked')).map(c => {
                 return KOMODITAS_LIST.find(k => k.id === c.value).nama;
             });
 
-            if(nik.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "NIK harus 16 digit."; return; }
+            if(nik.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "No. KTP harus 16 digit."; return; }
             if(no_kk.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "No. KK harus 16 digit."; return; }
+            if(no_atm.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "No. Kartu ATM harus 16 digit."; return; }
             if(prod.length === 0) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "Pilih minimal 1 jenis komoditas."; return; }
 
             const id = `PPB-${Math.floor(1000 + Math.random() * 9000)}`;
-            savePesanan({ id, nik, no_kk, nama, kelurahan: kel, produkNama: prod, status: 'Menunggu', waktu: new Date().toLocaleString('id-ID') });
+            savePesanan({ id, nik, no_kk, nama, no_atm, kategori, nama_pengisi, kelurahan: kel, produkNama: prod, status: 'Menunggu', waktu: new Date().toLocaleString('id-ID') });
 
             document.getElementById('view-form').classList.add('hidden');
             document.getElementById('view-tiket').classList.remove('hidden');
             document.getElementById('tiket-id').textContent = id;
             document.getElementById('tiket-nama').textContent = nama;
-            document.getElementById('tiket-kk').textContent = no_kk;
-            document.getElementById('tiket-kelurahan').textContent = kel;
+            document.getElementById('tiket-kategori').textContent = kategori;
+            document.getElementById('tiket-no-atm').textContent = no_atm;
+            document.getElementById('tiket-pengisi').textContent = nama_pengisi;
+            document.getElementById('tiket-nik').textContent = nik;
 
             generateQR(id);
             if (window.lucide) lucide.createIcons();
@@ -326,9 +369,11 @@
                 res.classList.remove('hidden');
                 document.getElementById('v-id').textContent = pesanan.id;
                 document.getElementById('v-nama').textContent = pesanan.nama;
+                document.getElementById('v-no-atm').textContent = pesanan.no_atm;
+                document.getElementById('v-kategori').textContent = pesanan.kategori;
+                document.getElementById('v-nama-pengisi').textContent = pesanan.nama_pengisi || '-';
                 document.getElementById('v-kelurahan').textContent = pesanan.kelurahan;
                 document.getElementById('v-nik').textContent = pesanan.nik;
-                document.getElementById('v-kk').textContent = pesanan.no_kk;
                 
                 const prodContainer = document.getElementById('v-produk');
                 prodContainer.innerHTML = '';
