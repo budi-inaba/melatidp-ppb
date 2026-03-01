@@ -147,6 +147,8 @@
                 </div>
 
                 <div class="text-left bg-blue-50 p-4 rounded-xl text-sm text-blue-900 mb-6 border border-blue-100 space-y-1">
+                    <!-- Keterangan Waktu di atas kategori -->
+                    <div class="flex justify-between text-green-600"><span>Waktu:</span> <span id="tiket-waktu" class="font-bold"></span></div>
                     <div class="flex justify-between"><span>Kategori:</span> <span id="tiket-kategori" class="font-bold"></span></div>
                     <div class="flex justify-between"><span>Pemilik ATM:</span> <span id="tiket-nama" class="font-bold"></span></div>
                     <div class="flex justify-between"><span>No. Kartu ATM:</span> <span id="tiket-no-atm" class="font-bold"></span></div>
@@ -276,10 +278,6 @@
             container.innerHTML = '';
             
             KOMODITAS_LIST.forEach(item => {
-                // Logika Perbaikan:
-                // Susu UHT disembunyikan HANYA JIKA:
-                // 1. Pengguna sudah memilih kategori (kategoriPenerima tidak kosong)
-                // 2. Kategori yang dipilih BUKAN 'KJP'
                 if (item.id === 'susu') {
                     if (kategoriPenerima && kategoriPenerima !== 'KJP') {
                         return;
@@ -324,7 +322,9 @@
             if(prod.length === 0) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "Pilih minimal 1 jenis komoditas."; return; }
 
             const id = `PPB-${Math.floor(1000 + Math.random() * 9000)}`;
-            savePesanan({ id, nik, no_kk, nama, no_atm, kategori, nama_pengisi, kelurahan: kel, produkNama: prod, status: 'Menunggu', waktu: new Date().toLocaleString('id-ID') });
+            const waktuSekarang = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }).replace(/\./g, ':');
+            
+            savePesanan({ id, nik, no_kk, nama, no_atm, kategori, nama_pengisi, kelurahan: kel, produkNama: prod, status: 'Menunggu', waktu: waktuSekarang });
 
             document.getElementById('view-form').classList.add('hidden');
             document.getElementById('view-tiket').classList.remove('hidden');
@@ -334,6 +334,7 @@
             document.getElementById('tiket-no-atm').textContent = no_atm;
             document.getElementById('tiket-pengisi').textContent = nama_pengisi;
             document.getElementById('tiket-nik').textContent = nik;
+            document.getElementById('tiket-waktu').textContent = waktuSekarang;
 
             generateQR(id);
             if (window.lucide) lucide.createIcons();
