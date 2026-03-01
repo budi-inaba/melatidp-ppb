@@ -508,7 +508,8 @@ function getWaktuOperasionalText() {
             document.getElementById('review-kk').textContent = registeredData.kk;
             document.getElementById('review-nama_pemilik').textContent = registeredData.nama_pemilik;
             document.getElementById('review-produk').textContent = registeredData.produk;
-            const qrData = JSON.stringify({id: registeredData.id, kk: registeredData.kk});
+            const baseUrl = window.location.origin + "/melatidp-ppb";
+            const qrData = `${baseUrl}/verifikasi.html?id=${registeredData.id}`;
             document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}`;
         }
 
