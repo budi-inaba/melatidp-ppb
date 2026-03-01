@@ -20,13 +20,6 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .scale-in {
-            animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -38,11 +31,9 @@
 
     <nav class="bg-white shadow-md border-b-4 border-blue-600 sticky top-0 z-50">
         <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col items-center gap-1">
-            <!-- LOGO RPTRA - Ukuran diperkecil dari h-16 ke h-10 -->
             <div class="h-10 flex items-center justify-center">
                 <img src="logo-rptra.png" alt="Logo RPTRA" class="h-full w-auto object-contain" onerror="this.src='https://placehold.co/120x40/f3f4f6/3b82f6?text=LOGO+RPTRA';">
             </div>
-            
             <div class="flex flex-col items-center text-center">
                 <span class="font-extrabold text-xl tracking-tight text-blue-900 leading-tight">Sistem PPB Terpadu</span>
                 <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">RPTRA Melati Duri Pulo</span>
@@ -61,59 +52,41 @@
                 </div>
 
                 <form id="form-pendaftaran" class="space-y-6" onsubmit="handlePendaftaran(event)">
-                    
-                    <!-- DATA PEMOHON -->
                     <div class="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
                         <h2 class="font-bold flex items-center gap-2 text-blue-600 border-b pb-2 text-sm uppercase">
                             <i data-lucide="user" class="w-4 h-4"></i> Informasi Identitas
                         </h2>
                         
-                        <!-- Kelurahan -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Kelurahan Sesuai KK</label>
-                            <input type="text" id="kelurahan" required 
-                                oninput="validateLetters(this)"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-                                placeholder="Masukkan nama kelurahan">
+                            <input type="text" id="kelurahan" required oninput="validateLetters(this)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Masukkan nama kelurahan">
                         </div>
 
-                        <!-- No KK -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. Kartu Keluarga (16 Digit)</label>
                             <input type="number" id="no_kk" required oninput="javascript: if (this.value.length > 16) this.value = this.value.slice(0, 16);" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="317101XXXXXXXXXX">
                         </div>
 
-                        <!-- Nama Pengisi Form -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Pengisi Form</label>
-                            <input type="text" id="nama_pengisi" required 
-                                oninput="validateLetters(this)"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-                                placeholder="Masukkan nama lengkap">
+                            <input type="text" id="nama_pengisi" required oninput="validateLetters(this)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Masukkan nama lengkap">
                         </div>
 
-                        <!-- No. KTP -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. KTP (16 Digit)</label>
                             <input type="number" id="nik" required oninput="javascript: if (this.value.length > 16) this.value = this.value.slice(0, 16);" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="317101XXXXXXXXXX">
                         </div>
 
-                        <!-- Nama Pemilik Kartu ATM -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Pemilik Kartu ATM</label>
-                            <input type="text" id="nama" required 
-                                oninput="validateLetters(this)"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-                                placeholder="Sesuai nama di kartu">
+                            <input type="text" id="nama" required oninput="validateLetters(this)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Sesuai nama di kartu">
                         </div>
 
-                        <!-- No. Kartu ATM -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. Kartu ATM (16 Digit)</label>
                             <input type="number" id="no_atm" required oninput="javascript: if (this.value.length > 16) this.value = this.value.slice(0, 16);" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="6013XXXXXXXXXXXX">
                         </div>
 
-                        <!-- Kategori Penerima -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Kategori Penerima</label>
                             <select id="kategori_penerima" onchange="renderProduk()" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
@@ -129,14 +102,11 @@
                         </div>
                     </div>
 
-                    <!-- JENIS KOMODITAS -->
                     <div class="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
                         <h2 class="font-bold flex items-center gap-2 text-green-600 border-b pb-2 text-sm uppercase">
                             <i data-lucide="shopping-bag" class="w-4 h-4"></i> Jenis Komoditas
                         </h2>
-                        <div id="container-produk" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <!-- Produk dirender otomatis -->
-                        </div>
+                        <div id="container-produk" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                     </div>
 
                     <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 px-4 rounded-xl hover:bg-blue-700 transition flex justify-center items-center gap-2 shadow-lg active:scale-95">
@@ -150,25 +120,48 @@
         <div id="view-tiket" class="hidden fade-in max-w-md mx-auto">
             <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
                 <div class="bg-gray-50 p-6 text-center border-b">
-                    <!-- Ukuran logo diperkecil dari h-12 ke h-8 -->
                     <img src="logo-rptra.png" alt="Logo RPTRA" class="h-8 w-auto mx-auto mb-2" onerror="this.src='https://placehold.co/80x30/f3f4f6/3b82f6?text=RPTRA';">
                     <h2 class="text-xl font-extrabold text-blue-900">Bukti Pendaftaran</h2>
                     <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">RPTRA Melati Duri Pulo</p>
                 </div>
                 
-                <div class="p-8 text-center">
+                <div class="p-6 text-center">
                     <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-100 flex justify-center"></div>
                     <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-1">ID Transaksi</p>
                     <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700 mb-6">PPB-XXXX</p>
                     
-                    <div class="text-left bg-gray-50 p-4 rounded-xl text-sm border border-gray-100 space-y-2 mb-6">
-                        <div class="flex justify-between"><span>Waktu:</span> <span id="tiket-waktu" class="font-bold"></span></div>
-                        <div class="flex justify-between"><span>Kategori:</span> <span id="tiket-kategori" class="font-bold"></span></div>
-                        <div class="flex justify-between"><span>Pemilik ATM:</span> <span id="tiket-nama" class="font-bold"></span></div>
-                        <div class="flex justify-between"><span>No. KTP:</span> <span id="tiket-nik" class="font-bold"></span></div>
-                        <div class="border-t pt-2">
-                            <span class="text-[10px] text-gray-400 uppercase font-bold">Komoditas:</span>
-                            <div id="tiket-produk-list" class="flex flex-wrap gap-1 mt-1 text-xs font-bold text-blue-700"></div>
+                    <div class="text-left bg-gray-50 p-4 rounded-xl text-xs border border-gray-100 space-y-2 mb-6">
+                        <div class="flex justify-between border-b border-gray-200 pb-1">
+                            <span class="text-gray-500">Waktu Daftar:</span> 
+                            <span id="tiket-waktu" class="font-bold text-green-600"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Lokasi/Kelurahan:</span> 
+                            <span id="tiket-kelurahan" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">No. Kartu Keluarga:</span> 
+                            <span id="tiket-kk" class="font-bold font-mono"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Kategori:</span> 
+                            <span id="tiket-kategori" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Nama Pengisi:</span> 
+                            <span id="tiket-pengisi" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Pemilik ATM:</span> 
+                            <span id="tiket-nama" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">No. KTP (NIK):</span> 
+                            <span id="tiket-nik" class="font-bold font-mono"></span>
+                        </div>
+                        <div class="border-t border-gray-200 pt-2 mt-2">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold">Komoditas yang Dipesan:</span>
+                            <div id="tiket-produk-list" class="flex flex-wrap gap-1 mt-1 font-bold text-blue-700"></div>
                         </div>
                     </div>
 
@@ -183,7 +176,6 @@
         <div id="view-verifikasi" class="hidden fade-in max-w-md mx-auto">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6">
                 <h1 class="text-lg font-bold mb-6 text-center text-gray-800 flex flex-col items-center gap-2">
-                    <!-- Ukuran logo diperkecil dari h-12 ke h-8 -->
                     <img src="logo-rptra.png" alt="Logo RPTRA" class="h-8 w-auto mb-1" onerror="this.src='https://placehold.co/80x30/f3f4f6/3b82f6?text=RPTRA';">
                     <span class="text-blue-900">Verifikasi Pengambilan</span>
                 </h1>
@@ -203,7 +195,6 @@
                     <button id="btn-approve" onclick="approvePesanan()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg">
                         Konfirmasi Penyerahan
                     </button>
-                    
                     <button onclick="window.location.href = window.location.pathname" class="w-full mt-4 text-gray-400 text-xs py-2">Batal</button>
                 </div>
             </div>
@@ -253,7 +244,6 @@
             
             KOMODITAS_LIST.forEach(item => {
                 if (item.id === 'susu' && kategoriPenerima && kategoriPenerima !== 'KJP') return;
-
                 const div = document.createElement('div');
                 div.className = `border-2 border-gray-100 rounded-xl p-4 flex items-center gap-4 transition bg-white hover:border-blue-400 cursor-pointer group`;
                 div.innerHTML = `
@@ -300,17 +290,22 @@
 
             document.getElementById('view-form').classList.add('hidden');
             document.getElementById('view-tiket').classList.remove('hidden');
+            
+            // Render Data ke Tiket
             document.getElementById('tiket-id').textContent = id;
             document.getElementById('tiket-nama').textContent = nama;
             document.getElementById('tiket-kategori').textContent = kategori;
             document.getElementById('tiket-nik').textContent = nik;
+            document.getElementById('tiket-kk').textContent = no_kk;
+            document.getElementById('tiket-kelurahan').textContent = kel;
+            document.getElementById('tiket-pengisi').textContent = nama_pengisi;
             document.getElementById('tiket-waktu').textContent = waktuSekarang;
 
             const prodList = document.getElementById('tiket-produk-list');
             prodList.innerHTML = '';
             prod.forEach(p => {
                 const item = document.createElement('span');
-                item.className = "bg-blue-50 px-2 py-0.5 rounded";
+                item.className = "bg-blue-50 px-2 py-0.5 rounded text-[10px]";
                 item.textContent = p;
                 prodList.appendChild(item);
             });
@@ -325,27 +320,22 @@
             container.innerHTML = '';
             let urlBase = window.location.href.split('?')[0];
             const finalUrl = `${urlBase}?verify=${id}`;
-            new QRCode(container, { text: finalUrl, width: 200, height: 200, colorDark : "#1e3a8a" });
+            new QRCode(container, { text: finalUrl, width: 160, height: 160, colorDark : "#1e3a8a" });
         }
 
-        function resetForm() {
-            window.location.href = window.location.pathname;
-        }
+        function resetForm() { window.location.href = window.location.pathname; }
 
         function autoVerify(id) {
             const pesanan = getPesanan().find(p => p.id === id.toUpperCase());
             if (!pesanan) return;
-            
             document.getElementById('view-form').classList.add('hidden');
             document.getElementById('view-verifikasi').classList.remove('hidden');
-
             pesananAktif = pesanan;
             document.getElementById('verifikasi-data').classList.remove('hidden');
             document.getElementById('v-id').textContent = pesanan.id;
             document.getElementById('v-nama').textContent = pesanan.nama;
             document.getElementById('v-no-atm').textContent = pesanan.no_atm;
             document.getElementById('v-kategori').textContent = pesanan.kategori;
-            
             const prodContainer = document.getElementById('v-produk');
             prodContainer.innerHTML = '';
             pesanan.produkNama.forEach(n => { 
@@ -354,7 +344,6 @@
                 span.textContent = n; 
                 prodContainer.appendChild(span); 
             });
-            
             if (window.lucide) lucide.createIcons();
         }
 
