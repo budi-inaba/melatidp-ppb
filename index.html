@@ -510,7 +510,7 @@ function getWaktuOperasionalText() {
             document.getElementById('review-produk').textContent = registeredData.produk;
             const baseUrl = window.location.origin + "/melatidp-ppb";
             const qrData = `${baseUrl}/verifikasi.html?id=${registeredData.id}`;
-            document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}`;
+            document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifyUrl)}`;
         }
 
         function toggleLoading(isLoading, btnId) {
