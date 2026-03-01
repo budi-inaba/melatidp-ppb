@@ -239,7 +239,7 @@
     </main>
 
     <script>
-        // Daftar komoditas dengan urutan yang diminta sebelumnya
+        // Daftar komoditas
         const KOMODITAS_LIST = [
             { id: 'ayam', nama: 'Ayam 1 ekor', harga: 'Rp 8.000' },
             { id: 'daging', nama: 'Daging Sapi 1Kg', harga: 'Rp 35.000' },
@@ -276,9 +276,14 @@
             container.innerHTML = '';
             
             KOMODITAS_LIST.forEach(item => {
-                // Logika: Sembunyikan Susu UHT jika kategori bukan KJP
-                if (item.id === 'susu' && kategoriPenerima !== 'KJP') {
-                    return;
+                // Logika Perbaikan:
+                // Susu UHT disembunyikan HANYA JIKA:
+                // 1. Pengguna sudah memilih kategori (kategoriPenerima tidak kosong)
+                // 2. Kategori yang dipilih BUKAN 'KJP'
+                if (item.id === 'susu') {
+                    if (kategoriPenerima && kategoriPenerima !== 'KJP') {
+                        return;
+                    }
                 }
 
                 const div = document.createElement('div');
@@ -354,7 +359,7 @@
             document.getElementById('form-pendaftaran').reset();
             document.getElementById('view-tiket').classList.add('hidden');
             document.getElementById('view-form').classList.remove('hidden');
-            renderProduk(); // Reset daftar produk ke kondisi awal
+            renderProduk(); 
             if (window.lucide) lucide.createIcons();
         }
 
