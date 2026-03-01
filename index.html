@@ -41,16 +41,12 @@
 </head>
 <body class="bg-gray-50 min-h-screen font-sans text-gray-800">
 
-    <!-- Navigation Bar -->
+    <!-- Navigation Bar (Sederhana tanpa tombol navigasi) -->
     <nav class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2 font-bold text-lg">
-                <i data-lucide="package" class="w-6 h-6"></i>
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-center items-center">
+            <div class="flex items-center gap-2 font-bold text-xl">
+                <i data-lucide="package" class="w-7 h-7"></i>
                 <span>Sistem PPB Terpadu</span>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="switchView('form')" id="nav-form" class="px-3 py-1.5 bg-blue-700 rounded-md text-sm font-medium hover:bg-blue-800 transition shadow-inner">Pendaftaran</button>
-                <button onclick="switchView('verifikasi')" id="nav-verifikasi" class="px-3 py-1.5 bg-blue-500 rounded-md text-sm font-medium hover:bg-blue-800 transition">Verifikasi Admin</button>
             </div>
         </div>
     </nav>
@@ -125,12 +121,10 @@
                     <i data-lucide="check" class="w-10 h-10"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-2">Pendaftaran Berhasil!</h2>
-                <p class="text-gray-500 mb-6">Tunjukkan QR Code ini kepada petugas untuk proses verifikasi.</p>
+                <p class="text-gray-500 mb-6 text-sm">Tunjukkan QR Code ini kepada petugas untuk proses verifikasi pengambilan.</p>
                 
                 <div class="bg-gray-100 p-6 rounded-xl border border-dashed border-gray-300 mb-6 flex flex-col items-center">
-                    <!-- Kontainer untuk merender QR Code -->
                     <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-200"></div>
-                    
                     <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">ID Pesanan</p>
                     <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700">PPB-XXXX</p>
                 </div>
@@ -140,30 +134,24 @@
                     <p><strong>Kelurahan:</strong> <span id="tiket-kelurahan"></span></p>
                 </div>
 
-                <div id="qr-warning" class="hidden text-xs text-red-500 bg-red-50 p-2 rounded mb-4">
-                    <strong>Catatan:</strong> QR Code hanya berfungsi jika aplikasi sudah di-upload ke internet (hosting).
+                <div id="qr-warning" class="hidden text-[10px] text-red-500 bg-red-50 p-2 rounded mb-4">
+                    <strong>Catatan Sistem:</strong> QR Code memerlukan URL publik (Hosting) untuk berfungsi saat di-scan.
                 </div>
 
-                <button onclick="resetForm()" class="text-blue-600 font-medium hover:underline">Daftar Baru</button>
+                <button onclick="resetForm()" class="text-blue-600 font-medium hover:underline text-sm flex items-center justify-center gap-1 mx-auto">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Buat Pendaftaran Baru
+                </button>
             </div>
         </div>
 
-
         <!-- ==========================================
-             VIEW: VERIFIKASI (ADMIN)
+             VIEW: VERIFIKASI ADMIN (HANYA DIBUKA VIA SCAN)
         =========================================== -->
         <div id="view-verifikasi" class="hidden fade-in max-w-md mx-auto">
             <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
                 <h1 class="text-xl font-bold mb-6 text-center text-gray-800 flex items-center justify-center gap-2">
-                    <i data-lucide="shield-check" class="text-blue-600"></i> Verifikasi Pesanan
+                    <i data-lucide="shield-check" class="text-blue-600"></i> Mode Verifikasi Petugas
                 </h1>
-
-                <div class="flex gap-2 mb-6">
-                    <input type="text" id="search-id" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none uppercase font-mono" placeholder="Masukkan ID (PPB-1234)">
-                    <button onclick="cariPesanan()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-1">
-                        <i data-lucide="search" class="w-4 h-4"></i> Cari
-                    </button>
-                </div>
 
                 <div id="verifikasi-status" class="hidden text-center p-3 rounded-lg mb-4 text-sm font-medium"></div>
 
@@ -173,10 +161,10 @@
 
                         <div class="flex justify-between border-b pb-2">
                             <span class="text-gray-500">ID Pesanan</span>
-                            <span id="v-id" class="font-bold font-mono"></span>
+                            <span id="v-id" class="font-bold font-mono text-blue-600"></span>
                         </div>
                         <div class="flex justify-between border-b pb-2">
-                            <span class="text-gray-500">Nama</span>
+                            <span class="text-gray-500">Nama Warga</span>
                             <span id="v-nama" class="font-semibold text-right"></span>
                         </div>
                         <div class="flex justify-between border-b pb-2">
@@ -184,17 +172,21 @@
                             <span id="v-kelurahan" class="text-right"></span>
                         </div>
                         <div class="border-b pb-2">
-                            <span class="text-gray-500 block mb-1">Produk Dipesan:</span>
+                            <span class="text-gray-500 block mb-1 font-semibold">Produk Dipesan:</span>
                             <ul id="v-produk" class="list-disc list-inside font-medium text-blue-700"></ul>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500">Waktu Daftar</span>
+                            <span class="text-gray-500">Terdaftar Pada</span>
                             <span id="v-waktu" class="text-xs text-right mt-1"></span>
                         </div>
                     </div>
 
-                    <button id="btn-approve" onclick="approvePesanan()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-lg flex justify-center items-center gap-2">
-                        <i data-lucide="check-square"></i> Setujui Pengambilan
+                    <button id="btn-approve" onclick="approvePesanan()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg text-lg flex justify-center items-center gap-2">
+                        <i data-lucide="check-circle"></i> Selesaikan Penyerahan
+                    </button>
+                    
+                    <button onclick="window.location.href = window.location.pathname" class="w-full mt-4 text-gray-500 text-sm py-2 hover:text-gray-700">
+                        Kembali ke Halaman Utama
                     </button>
                 </div>
             </div>
@@ -207,10 +199,10 @@
                 <div class="w-20 h-20 neon-green text-black rounded-full flex items-center justify-center mx-auto mb-4">
                     <i data-lucide="check-check" class="w-10 h-10"></i>
                 </div>
-                <h2 class="text-2xl font-bold mb-2">TERVERIFIKASI</h2>
-                <p class="text-gray-600 mb-6">Barang dapat diserahkan kepada warga.</p>
-                <button onclick="tutupPopupVerifikasi()" class="w-full bg-gray-800 text-white py-2 rounded-lg font-medium hover:bg-gray-900 transition">
-                    Tutup
+                <h2 class="text-2xl font-bold mb-2 uppercase">Sukses</h2>
+                <p class="text-gray-600 mb-6">Verifikasi berhasil. Silakan serahkan barang pesanan kepada warga.</p>
+                <button onclick="window.location.href = window.location.pathname" class="w-full bg-gray-800 text-white py-3 rounded-lg font-medium hover:bg-gray-900 transition">
+                    Kembali
                 </button>
             </div>
         </div>
@@ -218,6 +210,7 @@
     </main>
 
     <script>
+        // Simulasi Database Sederhana
         const DEFAULT_STOK = [
             { id: 'beras', nama: 'Beras Premium 5Kg', harga: 'Rp 30.000', duri_pulo: 50, lain: 20 },
             { id: 'telur', nama: 'Telur Ayam 1 Tray', harga: 'Rp 10.000', duri_pulo: 30, lain: 10 },
@@ -225,6 +218,8 @@
             { id: 'daging', nama: 'Daging Sapi 1Kg', harga: 'Rp 35.000', duri_pulo: 15, lain: 0 },
             { id: 'ayam', nama: 'Ayam Karkas 1 Ekor', harga: 'Rp 8.000', duri_pulo: 40, lain: 15 },
         ];
+
+        let pesananAktif = null;
 
         function initDB() {
             if (!localStorage.getItem('db_stok')) localStorage.setItem('db_stok', JSON.stringify(DEFAULT_STOK));
@@ -268,9 +263,9 @@
                 div.innerHTML = `
                     <div class="pt-1"><input type="checkbox" name="produk" value="${item.id}" ${habis ? 'disabled' : ''}></div>
                     <div class="flex-1">
-                        <p class="font-medium text-gray-800">${item.nama}</p>
+                        <p class="font-medium text-gray-800 text-sm">${item.nama}</p>
                         <p class="text-xs text-blue-600 font-semibold">${item.harga}</p>
-                        <p class="text-xs ${habis ? 'text-red-500' : 'text-gray-500'} mt-1">Kuota: ${sisa}</p>
+                        <p class="text-[10px] ${habis ? 'text-red-500' : 'text-gray-400'} mt-1">Sisa Kuota: ${sisa}</p>
                     </div>`;
                 if (!habis) div.onclick = (e) => { if(e.target.type !== 'checkbox') { const cb = div.querySelector('input'); cb.checked = !cb.checked; }};
                 container.appendChild(div);
@@ -285,8 +280,8 @@
             const kel = document.getElementById('kelurahan').value;
             const prod = Array.from(document.querySelectorAll('input[name="produk"]:checked')).map(c => c.value);
 
-            if(nik.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "NIK tidak valid."; return; }
-            if(prod.length === 0) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "Pilih produk."; return; }
+            if(nik.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "NIK harus 16 digit."; return; }
+            if(prod.length === 0) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "Pilih minimal 1 produk."; return; }
 
             const kat = getKategoriKelurahan(kel);
             let sk = getStok();
@@ -315,11 +310,9 @@
             const container = document.getElementById('qrcode-container');
             container.innerHTML = '';
             
-            // LOGIKA URL:
-            // Jika dibuka dari file lokal atau pratinjau, QR mungkin tidak valid bagi DNS publik.
+            // Link verifikasi otomatis
             let urlBase = window.location.href.split('?')[0];
             
-            // Cek apakah kita di lingkungan lokal
             if(window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '') {
                 document.getElementById('qr-warning').classList.remove('hidden');
             }
@@ -328,8 +321,8 @@
 
             new QRCode(container, {
                 text: finalUrl,
-                width: 180,
-                height: 180,
+                width: 200,
+                height: 200,
                 colorDark : "#1e3a8a",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
@@ -344,17 +337,19 @@
             renderProduk();
         }
 
-        function cariPesanan() {
-            const id = document.getElementById('search-id').value.trim().toUpperCase();
-            const pesanan = getPesanan().find(p => p.id === id);
+        function autoVerify(id) {
+            const pesanan = getPesanan().find(p => p.id === id.toUpperCase());
             const res = document.getElementById('verifikasi-data');
             const st = document.getElementById('verifikasi-status');
+            
+            document.getElementById('view-form').classList.add('hidden');
+            document.getElementById('view-verifikasi').classList.remove('hidden');
 
             if (!pesanan) {
                 res.classList.add('hidden');
                 st.classList.remove('hidden');
-                st.className = "text-center p-3 rounded-lg mb-4 bg-red-100 text-red-700";
-                st.textContent = "ID tidak ditemukan.";
+                st.className = "text-center p-4 rounded-lg mb-4 bg-red-100 text-red-700 font-bold";
+                st.textContent = "ID TIDAK DITEMUKAN / EXPIRED";
             } else {
                 pesananAktif = pesanan;
                 st.classList.add('hidden');
@@ -375,45 +370,29 @@
                     wm.className = "absolute inset-0 flex items-center justify-center opacity-20 text-4xl font-black text-green-600 rotate-[-30deg]";
                 } else {
                     btn.classList.remove('hidden');
-                    wm.textContent = "MENUNGGU";
-                    wm.className = "absolute inset-0 flex items-center justify-center opacity-10 text-4xl font-black text-yellow-600 rotate-[-30deg]";
+                    wm.textContent = "SIAP AMBIL";
+                    wm.className = "absolute inset-0 flex items-center justify-center opacity-10 text-4xl font-black text-blue-600 rotate-[-30deg]";
                 }
             }
         }
 
         function approvePesanan() {
+            if(!pesananAktif) return;
             updateStatusPesanan(pesananAktif.id, 'Selesai');
             document.getElementById('popup-verifikasi').classList.remove('hidden');
-            cariPesanan();
-        }
-
-        function tutupPopupVerifikasi() { document.getElementById('popup-verifikasi').classList.add('hidden'); }
-
-        function switchView(v) {
-            document.getElementById('view-form').classList.add('hidden');
-            document.getElementById('view-tiket').classList.add('hidden');
-            document.getElementById('view-verifikasi').classList.add('hidden');
-            document.getElementById('nav-form').classList.replace('bg-blue-700', 'bg-blue-500');
-            document.getElementById('nav-verifikasi').classList.replace('bg-blue-700', 'bg-blue-500');
-
-            if(v === 'form') {
-                document.getElementById('view-form').classList.remove('hidden');
-                document.getElementById('nav-form').classList.replace('bg-blue-500', 'bg-blue-700');
-            } else {
-                document.getElementById('view-verifikasi').classList.remove('hidden');
-                document.getElementById('nav-verifikasi').classList.replace('bg-blue-500', 'bg-blue-700');
-            }
         }
 
         window.onload = () => {
             initDB();
             lucide.createIcons();
+            
+            // Logika Deteksi Scan QR
             const urlParams = new URLSearchParams(window.location.search);
             const vId = urlParams.get('verify');
+            
             if (vId) {
-                switchView('verifikasi');
-                document.getElementById('search-id').value = vId;
-                cariPesanan();
+                autoVerify(vId);
+                // Bersihkan URL tanpa reload agar rapi
                 window.history.replaceState({}, '', window.location.pathname);
             }
         };
