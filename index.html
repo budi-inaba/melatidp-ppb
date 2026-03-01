@@ -127,41 +127,46 @@
                 
                 <div class="p-6 text-center">
                     <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-100 flex justify-center"></div>
-                    <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-1">ID Transaksi</p>
-                    <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700 mb-6">PPB-XXXX</p>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-1 text-center">ID Transaksi</p>
+                    <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700 mb-6 text-center">PPB-XXXX</p>
                     
-                    <div class="text-left bg-gray-50 p-4 rounded-xl text-xs border border-gray-100 space-y-2 mb-6">
-                        <div class="flex justify-between border-b border-gray-200 pb-1">
-                            <span class="text-gray-500">Waktu Daftar:</span> 
-                            <span id="tiket-waktu" class="font-bold text-green-600"></span>
+                    <div class="text-left bg-gray-50 p-4 rounded-xl text-xs border border-gray-100 space-y-3 mb-6">
+                        <div class="flex flex-col border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Waktu Daftar</span> 
+                            <span id="tiket-waktu" class="font-bold text-gray-800"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Lokasi/Kelurahan:</span> 
-                            <span id="tiket-kelurahan" class="font-bold"></span>
+                        <div class="flex flex-col border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Kelurahan</span> 
+                            <span id="tiket-kelurahan" class="font-bold text-gray-800"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">No. Kartu Keluarga:</span> 
-                            <span id="tiket-kk" class="font-bold font-mono"></span>
+                        <div class="flex flex-col border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">No. Kartu Keluarga</span> 
+                            <span id="tiket-kk" class="font-bold font-mono text-gray-800"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Kategori:</span> 
-                            <span id="tiket-kategori" class="font-bold"></span>
+                        <div class="flex flex-col border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Nama Pemilik Kartu ATM</span> 
+                            <span id="tiket-nama" class="font-bold text-gray-800"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Nama Pengisi:</span> 
-                            <span id="tiket-pengisi" class="font-bold"></span>
+                        <div class="flex flex-col border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Kategori Penerima</span> 
+                            <span id="tiket-kategori" class="font-bold text-gray-800"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Pemilik ATM:</span> 
-                            <span id="tiket-nama" class="font-bold"></span>
+                        <div class="flex flex-col border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Jenis Komoditas</span>
+                            <div id="tiket-produk-list" class="flex flex-wrap gap-1 mt-1 font-bold text-blue-700 uppercase"></div>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">No. KTP (NIK):</span> 
-                            <span id="tiket-nik" class="font-bold font-mono"></span>
+                        <div class="flex flex-col border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Lokasi Pengambilan</span>
+                            <div class="text-gray-800 leading-relaxed">
+                                <p class="font-extrabold text-blue-900">RPTRA Melati Duri Pulo</p>
+                                <p>Jl. Petojo Barat XI No. 5 RT. 012 RW. 001</p>
+                                <p>Kelurahan Duri Pulo - Kecamatan Gambir</p>
+                                <p>Jakarta Pusat</p>
+                            </div>
                         </div>
-                        <div class="border-t border-gray-200 pt-2 mt-2">
-                            <span class="text-[10px] text-gray-400 uppercase font-bold">Komoditas yang Dipesan:</span>
-                            <div id="tiket-produk-list" class="flex flex-wrap gap-1 mt-1 font-bold text-blue-700"></div>
+                        <div class="flex flex-col">
+                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Status</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-yellow-100 text-yellow-800 w-fit">MENUNGGU VERIFIKASI</span>
                         </div>
                     </div>
 
@@ -249,7 +254,7 @@
                 div.innerHTML = `
                     <input type="checkbox" name="produk" value="${item.id}" class="w-5 h-5 rounded border-gray-300 text-blue-600">
                     <div class="flex-1">
-                        <p class="font-bold text-gray-800 text-sm group-hover:text-blue-700 transition">${item.nama}</p>
+                        <p class="font-bold text-gray-800 text-sm group-hover:text-blue-700 transition uppercase">${item.nama}</p>
                         <p class="text-xs text-blue-500 font-bold">${item.harga}</p>
                     </div>`;
                 div.onclick = (e) => { 
@@ -295,17 +300,15 @@
             document.getElementById('tiket-id').textContent = id;
             document.getElementById('tiket-nama').textContent = nama;
             document.getElementById('tiket-kategori').textContent = kategori;
-            document.getElementById('tiket-nik').textContent = nik;
             document.getElementById('tiket-kk').textContent = no_kk;
             document.getElementById('tiket-kelurahan').textContent = kel;
-            document.getElementById('tiket-pengisi').textContent = nama_pengisi;
             document.getElementById('tiket-waktu').textContent = waktuSekarang;
 
             const prodList = document.getElementById('tiket-produk-list');
             prodList.innerHTML = '';
             prod.forEach(p => {
                 const item = document.createElement('span');
-                item.className = "bg-blue-50 px-2 py-0.5 rounded text-[10px]";
+                item.className = "bg-blue-50 px-2 py-0.5 rounded text-[10px] border border-blue-100";
                 item.textContent = p;
                 prodList.appendChild(item);
             });
