@@ -20,6 +20,14 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* Animasi Scale untuk Notifikasi Tengah */
+        .scale-in {
+            animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
         /* Menghilangkan spin button pada input number */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -119,11 +127,6 @@
                         </div>
                     </div>
 
-                    <div id="form-error" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-start gap-2">
-                        <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
-                        <span id="form-error-msg">Terjadi kesalahan</span>
-                    </div>
-
                     <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 px-4 rounded-xl hover:bg-blue-700 transition flex justify-center items-center gap-2 shadow-lg active:scale-95">
                         <i data-lucide="check-circle" class="w-6 h-6"></i> Kirim Pendaftaran
                     </button>
@@ -143,11 +146,29 @@
                 <div class="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-200 mb-6 flex flex-col items-center">
                     <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-100"></div>
                     <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-1">ID Transaksi</p>
-                    <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700">PPB-XXXX</p>
+                    <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700 mb-4">PPB-XXXX</p>
+                    
+                    <!-- KOMODITAS TERPILIH -->
+                    <div class="w-full border-t border-gray-200 pt-3 mt-1 mb-4">
+                        <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-2">Komoditas Dipilih</p>
+                        <div id="tiket-produk-list" class="flex flex-wrap justify-center gap-1.5 px-2 text-xs font-bold text-blue-700">
+                            <!-- Komoditas akan muncul di sini -->
+                        </div>
+                    </div>
+
+                    <!-- LOKASI PENGAMBILAN -->
+                    <div class="w-full border-t border-gray-200 pt-3">
+                        <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-2">Lokasi Pengambilan</p>
+                        <div class="text-gray-700 text-sm leading-relaxed">
+                            <p class="font-black text-blue-800">RPTRA Melati Duri Pulo</p>
+                            <p>Jl. Petojo Barat XI No. 5 RT. 012 RW. 001</p>
+                            <p>Kelurahan Duri Pulo - Kecamatan Gambir</p>
+                            <p>Jakarta Pusat</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="text-left bg-blue-50 p-4 rounded-xl text-sm text-blue-900 mb-6 border border-blue-100 space-y-1">
-                    <!-- Keterangan Waktu di atas kategori -->
                     <div class="flex justify-between text-green-600"><span>Waktu:</span> <span id="tiket-waktu" class="font-bold"></span></div>
                     <div class="flex justify-between"><span>Kategori:</span> <span id="tiket-kategori" class="font-bold"></span></div>
                     <div class="flex justify-between"><span>Pemilik ATM:</span> <span id="tiket-nama" class="font-bold"></span></div>
@@ -168,8 +189,6 @@
                 <h1 class="text-lg font-bold mb-6 text-center text-gray-800 flex items-center justify-center gap-2">
                     <i data-lucide="shield-check" class="text-blue-600"></i> Verifikasi Pengambilan
                 </h1>
-
-                <div id="verifikasi-status" class="hidden text-center p-4 rounded-xl mb-4 text-sm font-bold"></div>
 
                 <div id="verifikasi-data" class="hidden">
                     <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-4 text-sm mb-6 relative overflow-hidden">
@@ -224,16 +243,44 @@
             </div>
         </div>
 
-        <!-- Popup Sukses -->
-        <div id="popup-verifikasi" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-md">
-            <div class="bg-white rounded-3xl p-8 max-sm w-full text-center shadow-2xl">
+        <!-- NOTIFIKASI ERROR -->
+        <div id="modal-error" class="hidden fixed inset-0 bg-black/40 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl scale-in border-t-4 border-red-500">
+                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="alert-circle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Terjadi Kesalahan</h3>
+                <p id="form-error-msg" class="text-gray-600 text-sm mb-6 leading-relaxed">Pesan kesalahan akan muncul di sini.</p>
+                <button onclick="closeModal('modal-error')" class="w-full bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition active:scale-95 shadow-lg">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+
+        <!-- POPUP SUKSES -->
+        <div id="popup-verifikasi" class="hidden fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl scale-in border-t-8 border-green-500">
                 <div class="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <i data-lucide="check-check" class="w-10 h-10"></i>
                 </div>
-                <h2 class="text-2xl font-black mb-2 text-gray-900">SELESAI</h2>
-                <p class="text-gray-500 mb-8 text-sm">Status pesanan telah diperbarui.</p>
-                <button onclick="window.location.href = window.location.pathname" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold">
-                    Tutup
+                <h2 class="text-2xl font-black mb-2 text-gray-900">TRANSAKSI SELESAI</h2>
+                <p class="text-gray-500 mb-8 text-sm leading-relaxed">Data pendaftaran telah berhasil diverifikasi dan diserahkan.</p>
+                <button onclick="window.location.href = window.location.pathname" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition active:scale-95 shadow-xl">
+                    Tutup Halaman
+                </button>
+            </div>
+        </div>
+
+        <!-- NOTIFIKASI INVALID -->
+        <div id="modal-invalid" class="hidden fixed inset-0 bg-black/40 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl scale-in border-t-4 border-gray-500">
+                <div class="w-16 h-16 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="x-circle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Kode Tidak Valid</h3>
+                <p class="text-gray-600 text-sm mb-6">Data pendaftaran tidak ditemukan atau sudah kadaluarsa.</p>
+                <button onclick="window.location.href = window.location.pathname" class="w-full bg-gray-800 text-white py-3 rounded-xl font-bold">
+                    Kembali
                 </button>
             </div>
         </div>
@@ -272,17 +319,23 @@
             }
         }
 
+        function showError(msg) {
+            const el = document.getElementById('form-error-msg');
+            if(el) el.textContent = msg;
+            document.getElementById('modal-error').classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
         function renderProduk() {
             const container = document.getElementById('container-produk');
             const kategoriPenerima = document.getElementById('kategori_penerima').value;
             container.innerHTML = '';
             
             KOMODITAS_LIST.forEach(item => {
-                if (item.id === 'susu') {
-                    if (kategoriPenerima && kategoriPenerima !== 'KJP') {
-                        return;
-                    }
-                }
+                if (item.id === 'susu' && kategoriPenerima && kategoriPenerima !== 'KJP') return;
 
                 const div = document.createElement('div');
                 div.className = `border-2 border-gray-100 rounded-xl p-4 flex items-center gap-4 transition bg-white hover:border-blue-400 cursor-pointer group`;
@@ -302,9 +355,18 @@
             });
         }
 
+        function getFormattedDate() {
+            const now = new Date();
+            const d = String(now.getDate()).padStart(2, '0');
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const m = months[now.getMonth()];
+            const y = now.getFullYear();
+            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
+            return `${d} ${m} ${y}, ${time}`;
+        }
+
         function handlePendaftaran(e) {
             e.preventDefault();
-            const err = document.getElementById('form-error');
             const kel = document.getElementById('kelurahan').value;
             const nik = document.getElementById('nik').value;
             const no_kk = document.getElementById('no_kk').value;
@@ -316,13 +378,13 @@
                 return KOMODITAS_LIST.find(k => k.id === c.value).nama;
             });
 
-            if(nik.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "No. KTP harus 16 digit."; return; }
-            if(no_kk.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "No. KK harus 16 digit."; return; }
-            if(no_atm.length < 16) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "No. Kartu ATM harus 16 digit."; return; }
-            if(prod.length === 0) { err.classList.remove('hidden'); document.getElementById('form-error-msg').textContent = "Pilih minimal 1 jenis komoditas."; return; }
+            if(nik.length < 16) { showError("No. KTP harus 16 digit."); return; }
+            if(no_kk.length < 16) { showError("No. KK harus 16 digit."); return; }
+            if(no_atm.length < 16) { showError("No. Kartu ATM harus 16 digit."); return; }
+            if(prod.length === 0) { showError("Pilih minimal 1 jenis komoditas."); return; }
 
             const id = `PPB-${Math.floor(1000 + Math.random() * 9000)}`;
-            const waktuSekarang = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }).replace(/\./g, ':');
+            const waktuSekarang = getFormattedDate();
             
             savePesanan({ id, nik, no_kk, nama, no_atm, kategori, nama_pengisi, kelurahan: kel, produkNama: prod, status: 'Menunggu', waktu: waktuSekarang });
 
@@ -336,6 +398,15 @@
             document.getElementById('tiket-nik').textContent = nik;
             document.getElementById('tiket-waktu').textContent = waktuSekarang;
 
+            // Render daftar produk di tiket
+            const prodList = document.getElementById('tiket-produk-list');
+            prodList.innerHTML = '';
+            prod.forEach(p => {
+                const item = document.createElement('span');
+                item.textContent = `• ${p}`;
+                prodList.appendChild(item);
+            });
+
             generateQR(id);
             if (window.lucide) lucide.createIcons();
         }
@@ -345,15 +416,7 @@
             container.innerHTML = '';
             let urlBase = window.location.href.split('?')[0];
             const finalUrl = `${urlBase}?verify=${id}`;
-
-            new QRCode(container, {
-                text: finalUrl,
-                width: 220,
-                height: 220,
-                colorDark : "#1e3a8a",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
+            new QRCode(container, { text: finalUrl, width: 220, height: 220, colorDark : "#1e3a8a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
         }
 
         function resetForm() {
@@ -367,19 +430,14 @@
         function autoVerify(id) {
             const pesanan = getPesanan().find(p => p.id === id.toUpperCase());
             const res = document.getElementById('verifikasi-data');
-            const st = document.getElementById('verifikasi-status');
             
             document.getElementById('view-form').classList.add('hidden');
             document.getElementById('view-verifikasi').classList.remove('hidden');
 
             if (!pesanan) {
-                res.classList.add('hidden');
-                st.classList.remove('hidden');
-                st.className = "text-center p-6 rounded-2xl mb-4 bg-red-50 text-red-700 font-bold border border-red-200";
-                st.textContent = "KODE TIDAK VALID";
+                document.getElementById('modal-invalid').classList.remove('hidden');
             } else {
                 pesananAktif = pesanan;
-                st.classList.add('hidden');
                 res.classList.remove('hidden');
                 document.getElementById('v-id').textContent = pesanan.id;
                 document.getElementById('v-nama').textContent = pesanan.nama;
@@ -423,16 +481,7 @@
         window.onload = () => {
             initDB();
             renderProduk(); 
-            
-            const initLucide = () => {
-                if (window.lucide) {
-                    lucide.createIcons();
-                } else {
-                    setTimeout(initLucide, 100);
-                }
-            };
-            initLucide();
-
+            if (window.lucide) lucide.createIcons();
             const urlParams = new URLSearchParams(window.location.search);
             const vId = urlParams.get('verify');
             if (vId) autoVerify(vId);
