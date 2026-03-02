@@ -541,8 +541,9 @@ function getWaktuOperasionalText() {
             document.getElementById('review-kk').textContent = registeredData.kk;
             document.getElementById('review-nama_pemilik').textContent = registeredData.nama_pemilik;
             document.getElementById('review-produk').textContent = registeredData.produk;
-            const qrData = JSON.stringify({id: registeredData.id, kk: registeredData.kk});
-            document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}`;
+           const baseUrl = window.location.origin + window.location.pathname;
+           const qrUrl = `${baseUrl}?id=${registeredData.id}`;
+           document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUrl)}`;
         }
 
         function toggleLoading(isLoading, btnId) {
