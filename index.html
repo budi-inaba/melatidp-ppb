@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem PPB - Pendaftaran</title>
+    <title>RPTRA - Sistem PPB</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- QRCode.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         .fade-in {
@@ -20,367 +19,614 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        .hidden-view {
+            display: none !important;
         }
-        .error-msg {
-            display: none;
-            color: #ef4444;
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-            font-weight: 600;
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            display: block;
         }
-        /* Modal Backdrop Blur */
-        #modal-overlay {
-            backdrop-filter: blur(4px);
-            z-index: 1000;
+        .logo-fallback {
+            background: #2563eb;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 1rem;
         }
+        .input-error {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+        }
+
+        @keyframes fadeScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to   { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-fadeIn {
+        animation: fadeIn 0.25s ease-out;
+    }
+
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+<body class="min-h-screen bg-slate-50 font-sans text-gray-800">
 
-    <!-- MODAL PERINGATAN (DI TENGAH LAYAR) -->
-    <div id="modal-overlay" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center fade-in">
-            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i data-lucide="alert-circle" class="w-8 h-8"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2" id="modal-title">Data Tidak Valid</h3>
-            <p class="text-gray-600 text-sm mb-6" id="modal-message">Mohon periksa kembali input Anda.</p>
-            <button onclick="closeModal()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition active:scale-95 shadow-lg shadow-blue-200">
-                Saya Mengerti
-            </button>
-        </div>
+<!-- COVER OPERASIONAL -->
+<div id="operasional-cover"
+     class="fixed inset-0 z-[999] hidden flex items-center justify-center">
+
+  <!-- Background Gradient -->
+  <div class="absolute inset-0 bg-gradient-to-br from-pink-500 via-fuchsia-600 to-purple-700"></div>
+
+  <!-- Content Card -->
+  <div class="relative z-10 bg-white text-gray-800 
+              rounded-3xl shadow-2xl 
+              w-[92%] max-w-md 
+              p-8 md:p-10 
+              text-center 
+              animate-fadeIn">
+
+    <!-- Logo Container Putih -->
+    <div class="bg-white rounded-2xl shadow-md p-4 inline-block mb-6">
+      <img src="logo-rptra.png"
+           alt="Logo RPTRA"
+           class="h-16 mx-auto"
+           onerror="this.style.display='none'">
     </div>
 
-    <nav class="bg-white shadow-md border-b-4 border-blue-600 sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col items-center gap-1">
-            <div class="h-10 flex items-center justify-center">
-                <img src="logo-rptra.png" alt="Logo RPTRA" class="h-full w-auto object-contain" onerror="this.src='https://placehold.co/120x40/f3f4f6/3b82f6?text=LOGO+RPTRA';">
-            </div>
-            <div class="flex flex-col items-center text-center">
-                <span class="font-extrabold text-xl tracking-tight text-blue-900 leading-tight">Sistem PPB Terpadu</span>
-                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">RPTRA Melati Duri Pulo</span>
+    <!-- Judul -->
+    <h1 class="text-xl md:text-2xl font-bold mb-4">
+      Program Pangan Bersubsidi
+    </h1>
+
+    <!-- Info Tanggal -->
+    <p class="text-sm text-gray-600 mb-2">
+      Pendaftaran di buka pada tanggal :
+    </p>
+
+    <p id="cover-tanggal"
+       class="text-lg font-semibold text-purple-700 mb-4">
+    </p>
+
+    <!-- Premium Jam Operasional -->
+<div class="bg-gradient-to-r from-purple-50 to-pink-50 
+            rounded-2xl p-5 mb-6 border border-purple-100 shadow-sm">
+
+  <!-- Header -->
+  <div class="flex items-center justify-center gap-2 mb-4">
+    <div class="bg-purple-100 p-2 rounded-full">
+      <i data-lucide="clock" class="w-5 h-5 text-purple-600"></i>
+    </div>
+    <h3 class="text-sm font-semibold text-purple-700 tracking-wide">
+      Jam Operasional
+    </h3>
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-purple-200 mb-4"></div>
+
+  <!-- Jam Detail -->
+  <div class="space-y-3 text-sm">
+
+    <div class="flex justify-between items-center">
+      <span class="text-gray-600">Buka</span>
+      <span id="cover-jam-buka"
+            class="font-bold text-purple-700"></span>
+    </div>
+
+    <div class="flex justify-between items-center">
+      <span class="text-gray-600">Tutup</span>
+      <span id="cover-jam-tutup"
+            class="font-bold text-purple-700"></span>
+    </div>
+
+  </div>
+</div>
+
+
+    <!-- Pesan -->
+    <p class="text-sm text-gray-500">
+      Silahkan kembali saat jam operasional di buka.
+    </p>
+
+  </div>
+</div>
+
+    <!-- KONFIGURASI -->
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzT46JHRpENP03zyqQ3U579vLq9_neVCt4wf06NLvckTDz3u6xc9Xp59kXE1G4LCCcxWA/exec"; 
+        
+        // Database lokal sederhana untuk simulasi pengecekan duplikat Kartu Keluarga
+
+        function handleImgError(img) {
+            const container = img.parentElement;
+            img.style.display = 'none';
+            if (!container.querySelector('.logo-fallback')) {
+                const fallback = document.createElement('div');
+                fallback.className = 'logo-fallback';
+                fallback.innerText = 'RPTRA';
+                container.appendChild(fallback);
+            }
+        }
+    </script>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none"></div>
+
+    <!-- NAVBAR -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('form')">
+                <div class="logo-container">
+                    <!-- Updated Logo Path -->
+                    <img src="logo-rptra.png" 
+                         alt="Logo RPTRA" 
+                         class="h-10" 
+                         onerror="handleImgError(this)">
+                </div>
+                <div class="h-6 w-[1px] bg-gray-300"></div>
+                <span class="font-bold text-gray-800 text-lg tracking-tight">Program Pangan Bersubsidi</span>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto p-4 md:p-6">
+    <!-- MAIN CONTENT -->
+    <main class="container mx-auto p-4">
 
-        <!-- VIEW: PENDAFTARAN -->
-        <div id="view-form" class="fade-in">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
-                <div class="text-center mb-8">
-                    <h1 class="text-2xl font-bold text-gray-900">Formulir Pendaftaran</h1>
-                    <p class="text-gray-500 text-sm">Program Pangan Bersubsidi</p>
-                </div>
-
-                <form id="form-pendaftaran" class="space-y-6" onsubmit="handlePendaftaran(event)">
-                    <div class="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        <h2 class="font-bold flex items-center gap-2 text-blue-600 border-b pb-2 text-sm uppercase">
-                            <i data-lucide="user" class="w-4 h-4"></i> Informasi Identitas
-                        </h2>
-                        
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Kelurahan Sesuai KK</label>
-                            <input type="text" id="kelurahan" required oninput="validateLetters(this)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Masukkan nama kelurahan">
+        <!-- VIEW: FORM PENDAFTARAN -->
+        <div id="view-form" class="max-w-xl mx-auto py-6 fade-in">
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="bg-blue-600 p-6 text-white text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white opacity-10 rounded-full"></div>
+                    
+                    <div class="relative z-10 flex flex-col items-center">
+                        <div class="bg-white p-2 rounded-lg mb-3 shadow-md logo-container">
+                            <!-- Updated Logo Path -->
+                            <img src="logo-rptra.png" 
+                                 alt="Logo RPTRA" 
+                                 class="h-10" 
+                                 onerror="handleImgError(this)">
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. Kartu Keluarga (16 Digit)</label>
-                            <input type="number" id="no_kk" required oninput="limitDigits(this, 16); validateInputLength(this, 16)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="317101XXXXXXXXXX">
-                            <p id="error-no_kk" class="error-msg text-red-500 text-[10px] mt-1 hidden italic">Peringatan: Nomor KK harus tepat 16 digit.</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Pengisi Form</label>
-                            <input type="text" id="nama_pengisi" required oninput="validateLetters(this)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Masukkan nama lengkap">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. KTP (16 Digit)</label>
-                            <input type="number" id="nik" required oninput="limitDigits(this, 16); validateInputLength(this, 16)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="317101XXXXXXXXXX">
-                            <p id="error-nik" class="error-msg text-red-500 text-[10px] mt-1 hidden italic">Peringatan: NIK/KTP harus tepat 16 digit.</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Pemilik Kartu ATM</label>
-                            <input type="text" id="nama" required oninput="validateLetters(this)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Sesuai nama di kartu">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. Kartu ATM (16 atau 18 Digit)</label>
-                            <input type="number" id="no_atm" required oninput="limitDigits(this, 18); validateATM(this)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono" placeholder="6013XXXXXXXXXXXX">
-                            <p id="error-no_atm" class="error-msg text-red-500 text-[10px] mt-1 hidden italic">Peringatan: Nomor ATM harus 16 atau 18 digit.</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Kategori Penerima</label>
-                            <select id="kategori_penerima" onchange="renderProduk()" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                                <option value="" disabled selected>Pilih Kategori</option>
-                                <option value="KJP">KJP (Kartu Jakarta Pintar)</option>
-                                <option value="PJLP">PJLP (Penyedia Jasa Lainnya Perorangan)</option>
-                                <option value="Kartu Lansia">Kartu Lansia Jakarta (KLJ)</option>
-                                <option value="Kartu Disabilitas">Kartu Penyandang Disabilitas Jakarta (KPDJ)</option>
-                                <option value="Dasawisma">Dasawisma</option>
-                                <option value="KAJ">KAJ (Kartu Anak Jakarta)</option>
-                                <option value="Kartu Pekerja">Kartu Pekerja Jakarta (KPJ)</option>
-                            </select>
-                        </div>
+                        <h2 class="text-2xl font-bold mb-1">Formulir Pangan Murah</h2>
+                        <p class="text-blue-100 text-sm">Pendaftaran Komoditas RPTRA</p>
                     </div>
-
-                    <div class="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        <h2 class="font-bold flex items-center gap-2 text-green-600 border-b pb-2 text-sm uppercase">
-                            <i data-lucide="shopping-bag" class="w-4 h-4"></i> Jenis Komoditas
-                        </h2>
-                        <div id="container-produk" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 px-4 rounded-xl hover:bg-blue-700 transition flex justify-center items-center gap-2 shadow-lg active:scale-95">
-                        <i data-lucide="send" class="w-5 h-5"></i> Kirim Pendaftaran
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- VIEW: TIKET -->
-        <div id="view-tiket" class="hidden fade-in max-w-md mx-auto">
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-                <div class="bg-gray-50 p-6 text-center border-b">
-                    <img src="logo-rptra.png" alt="Logo RPTRA" class="h-8 w-auto mx-auto mb-2" onerror="this.src='https://placehold.co/80x30/f3f4f6/3b82f6?text=RPTRA';">
-                    <h2 class="text-xl font-extrabold text-blue-900">Bukti Pendaftaran</h2>
-                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">RPTRA Melati Duri Pulo</p>
                 </div>
                 
-                <div class="p-6 text-center">
-                    <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-100 flex justify-center"></div>
-                    <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-1 text-center">ID Transaksi</p>
-                    <p id="tiket-id" class="text-3xl font-mono font-bold tracking-wider text-blue-700 mb-6 text-center">PPB-XXXX</p>
-                    
-                    <div class="text-left bg-gray-50 p-4 rounded-xl text-xs border border-gray-100 space-y-3 mb-6">
-                        <div class="flex flex-col border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Waktu Daftar</span> 
-                            <span id="tiket-waktu" class="font-bold text-green-600"></span>
+                <form id="form-pendaftaran" class="p-8 space-y-5">
+                    <!-- Kelurahan -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kelurahan sesuai Kartu Keluarga</label>
+                        <input type="text" name="kelurahan" id="input-kelurahan" required
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition" 
+                            placeholder="Contoh : Petojo Utara">
+                    </div>
+
+                    <!-- No. Kartu Keluarga -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">No. Kartu Keluarga (16 Digit)</label>
+                        <input type="text" name="kk" id="input-kk" maxlength="16" required
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition font-mono"
+                            placeholder="Masukkan No. KK Anda">
+                        <p id="error-kk" class="hidden text-red-600 text-xs mt-1 font-medium">No. Kartu Keluarga sudah ada</p>
+                    </div>
+
+                    <!-- Nama & KTP -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pengisi Form</label>
+                            <input type="text" name="nama_pengisi" id="input-nama_pengisi" required
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition capitalize"
+                                placeholder="Masukkan Nama Anda">
                         </div>
-                        <div class="flex flex-col border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Kelurahan</span> 
-                            <span id="tiket-kelurahan" class="font-bold text-gray-800"></span>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">No. KTP (16 Digit)</label>
+                            <input type="text" name="ktp" id="input-ktp" maxlength="16" required
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition font-mono"
+                                placeholder="Masukkan No. KTP Anda">
                         </div>
-                        <div class="flex flex-col border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">No. Kartu Keluarga</span> 
-                            <span id="tiket-kk" class="font-bold font-mono text-gray-800"></span>
+                    </div>
+
+                    <!-- Nama Kartu & ATM -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pemilik Kartu</label>
+                            <input type="text" name="nama_pemilik" id="input-nama_pemilik" required
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition capitalize"
+                                placeholder="Nama sesuai kartu ATM">
                         </div>
-                        <div class="flex flex-col border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Nama Pemilik Kartu ATM</span> 
-                            <span id="tiket-nama" class="font-bold text-gray-800"></span>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">No. Kartu ATM (16 Digit)</label>
+                            <input type="text" name="atm" id="input-atm" maxlength="16" required
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 transition font-mono"
+                                placeholder="Masukkan No. Kartu ATM Anda">
                         </div>
-                        <div class="flex flex-col border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Kategori Penerima</span> 
-                            <span id="tiket-kategori" class="font-bold text-gray-800"></span>
+                    </div>
+
+                    <!-- Kategori & Komoditas -->
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori Penerima</label>
+                            <select name="kategori" id="input-kategori" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="KJP">KJP</option>
+                                <option value="PJLP">PJLP</option>
+                                <option value="Kartu Lansia">Kartu Lansia</option>
+                                <option value="Kartu Disabilitas">Kartu Disabilitas</option>
+                                <option value="Dasawisma">Dasawisma</option>
+                                <option value="KAJ">KAJ</option>
+                                <option value="Kartu Pekerja">Kartu Pekerja</option>
+                            </select>
                         </div>
-                        <div class="flex flex-col border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Jenis Komoditas</span>
-                            <div id="tiket-produk-list" class="flex flex-wrap gap-1 mt-1 font-bold text-blue-700 uppercase"></div>
-                        </div>
-                        <div class="flex flex-col border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Lokasi Pengambilan</span>
-                            <div class="text-gray-800 leading-relaxed">
-                                <p class="font-extrabold text-blue-900">RPTRA Melati Duri Pulo</p>
-                                <p>Jl. Petojo Barat XI No. 5 RT. 012 RW. 001</p>
-                                <p>Kelurahan Duri Pulo - Kecamatan Gambir</p>
-                                <p>Jakarta Pusat</p>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Komoditas :</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                <label class="flex items-center space-x-3 p-2 bg-white rounded-lg border border-gray-100 shadow-sm cursor-pointer hover:border-blue-300 transition">
+                                    <input type="checkbox" name="komoditas" value="Ayam" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700">Ayam - 1 ekor</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-2 bg-white rounded-lg border border-gray-100 shadow-sm cursor-pointer hover:border-blue-300 transition">
+                                    <input type="checkbox" name="komoditas" value="Daging Sapi" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700">Daging Sapi - 1 kg</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-2 bg-white rounded-lg border border-gray-100 shadow-sm cursor-pointer hover:border-blue-300 transition">
+                                    <input type="checkbox" name="komoditas" value="Telur" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700">Telur - 1 tray</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-2 bg-white rounded-lg border border-gray-100 shadow-sm cursor-pointer hover:border-blue-300 transition">
+                                    <input type="checkbox" name="komoditas" value="Beras" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700">Beras - 5 kg</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-2 bg-white rounded-lg border border-gray-100 shadow-sm cursor-pointer hover:border-blue-300 transition">
+                                    <input type="checkbox" name="komoditas" value="Ikan Kembung" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700">Ikan Kembung - 1 kg</span>
+                                </label>
+                                <label id="container-susu" class="flex items-center space-x-3 p-2 bg-white rounded-lg border border-gray-100 shadow-sm cursor-pointer hover:border-blue-300 transition">
+                                    <input type="checkbox" name="komoditas" value="Susu UHT" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700">Susu UHT (Khusus KJP)</span>
+                                </label>
                             </div>
                         </div>
                     </div>
 
-                    <button onclick="resetForm()" class="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition text-sm">
-                        Kembali ke Beranda
+                    <button type="submit" id="btn-submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 flex justify-center items-center gap-2">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        <span>Cek Data & Daftar</span>
                     </button>
-                </div>
+                    <div id="loading-indicator" class="hidden text-center text-blue-600">
+                        <i data-lucide="loader-2" class="animate-spin w-6 h-6 mx-auto"></i>
+                    </div>
+                </form>
             </div>
         </div>
 
+        <!-- VIEW: REVIEW & QR -->
+        <div id="view-review" class="max-w-md mx-auto py-10 px-4 hidden-view fade-in">
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden text-center p-8">
+                <div class="logo-container mb-4 opacity-50">
+                    <!-- Updated Logo Path -->
+                    <img src="logo-rptra.png" 
+                         alt="Logo RPTRA" 
+                         class="h-8 mx-auto" 
+                         onerror="handleImgError(this)">
+                </div>
+                
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="check-circle" class="text-green-600 w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Pendaftaran Berhasil !</h2>
+                <p class="text-gray-500 text-sm mb-6">Tunjukkan QR Code ini kepada petugas verifikasi.</p>
+
+                <div class="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-300 mb-6 flex justify-center">
+                    <img id="qr-image" src="" alt="QR Code" class="rounded-lg shadow-sm">
+                </div>
+
+                <div class="text-left space-y-3 text-sm border-t border-gray-100 pt-4">
+                    <!-- WAKTU OPERASIONAL -->
+                    <div class="flex justify-between">
+                    <span class="text-gray-500">Waktu</span>
+                    <span id="review-waktu" class="font-medium text-gray-800"></span>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">ID Registrasi</span>
+                        <span id="review-id" class="font-mono font-medium"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">No. Kartu Keluarga</span>
+                        <span id="review-kk" class="font-mono font-medium"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Nama Pemilik Kartu</span>
+                        <span id="review-nama_pemilik" class="font-medium"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Komoditas</span>
+                        <span id="review-produk" class="font-medium text-blue-600 text-right max-w-[60%]"></span>
+                    </div>
+                    <!-- LOKASI -->
+                    <div>
+                    <p class="text-gray-500 text-xs mb-1">Lokasi</p>
+                    <p class="font-medium text-gray-800">RPTRA Melati Duri Pulo
+                    </p>
+                    <p class="text-gray-600 text-xs leading-relaxed">
+                    Jl. Petojo Barat XI No. 5 RT. 012 RW. 001<br>
+                    Kelurahan Duri Pulo – Kecamatan Gambir<br>
+                    Jakarta Pusat
+                    </p>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Status</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-white-800">Disetujui</span>
+                    </div>
+                </div>
+
+                <button onclick="switchView('form')" class="mt-8 text-blue-600 text-sm font-medium hover:underline">
+                    Buat Pendaftaran Baru
+                </button>
+            </div>
+        </div>
     </main>
 
     <script>
-        // Modal Logic
-        function openModal(title, message) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-message').textContent = message;
-            document.getElementById('modal-overlay').classList.remove('hidden');
-        }
+        // --- STATE & UTILS ---
+        let currentView = 'form';
+        let registeredData = null;
 
-        function closeModal() {
-            document.getElementById('modal-overlay').classList.add('hidden');
-        }
-
-        function validateLetters(input) {
-            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
-        }
-
-        function limitDigits(input, max) {
-            if (input.value.length > max) {
-                input.value = input.value.slice(0, max);
-            }
-        }
-
-        function validateInputLength(input, target) {
-            const errorElement = document.getElementById('error-' + input.id);
-            if (input.value.length > 0 && input.value.length !== target) {
-                errorElement.classList.remove('hidden');
-                input.classList.add('border-red-500', 'ring-1', 'ring-red-200');
-            } else {
-                errorElement.classList.add('hidden');
-                input.classList.remove('border-red-500', 'ring-1', 'ring-red-200');
-            }
-        }
-
-        function validateATM(input) {
-            const errorElement = document.getElementById('error-no_atm');
-            const len = input.value.length;
-            if (len > 0 && len !== 16 && len !== 18) {
-                errorElement.classList.remove('hidden');
-                input.classList.add('border-red-500', 'ring-1', 'ring-red-200');
-            } else {
-                errorElement.classList.add('hidden');
-                input.classList.remove('border-red-500', 'ring-1', 'ring-red-200');
-            }
-        }
-
-        const KOMODITAS_LIST = [
-    { id: 'ayam', label: 'Ayam', nama: 'Ayam 1 ekor', harga: 'Rp 8.000' },
-    { id: 'daging', label: 'Daging Sapi', nama: 'Daging Sapi 1Kg', harga: 'Rp 35.000' },
-    { id: 'telur', label: 'Telur', nama: 'Telur Ayam 1 Tray', harga: 'Rp 10.000' },
-    { id: 'beras', label: 'Beras', nama: 'Beras Premium 5Kg', harga: 'Rp 30.000' },
-    { id: 'ikan', label: 'Ikan', nama: 'Ikan Kembung 1Kg', harga: 'Rp 13.000' },
-    { id: 'susu', label: 'Susu', nama: 'Susu UHT 1 Karton', harga: 'Rp 30.000' },
-];
-
-        function initDB() {
-            if (!localStorage.getItem('db_pesanan')) localStorage.setItem('db_pesanan', JSON.stringify([]));
-        }
-
-        function getPesanan() { return JSON.parse(localStorage.getItem('db_pesanan')); }
-        function savePesanan(data) {
-            const p = getPesanan();
-            p.push(data);
-            localStorage.setItem('db_pesanan', JSON.stringify(p));
-        }
-
-        function renderProduk() {
-            const container = document.getElementById('container-produk');
-            const kategoriPenerima = document.getElementById('kategori_penerima').value;
-            container.innerHTML = '';
-            
-            KOMODITAS_LIST.forEach(item => {
-                if (item.id === 'susu' && kategoriPenerima && kategoriPenerima !== 'KJP') return;
-                const div = document.createElement('div');
-                div.className = `border-2 border-gray-100 rounded-xl p-4 flex items-center gap-4 transition bg-white hover:border-blue-400 cursor-pointer group`;
-                div.innerHTML = `
-                    <input type="checkbox" name="produk" value="${item.id}" class="w-5 h-5 rounded border-gray-300 text-blue-600">
-                    <div class="flex-1">
-                        <p class="font-bold text-gray-800 text-sm group-hover:text-blue-700 transition uppercase">${item.nama}</p>
-                        <p class="text-xs text-blue-500 font-bold">${item.harga}</p>
-                    </div>`;
-                div.onclick = (e) => { 
-                    if(e.target.type !== 'checkbox') { 
-                        const cb = div.querySelector('input'); 
-                        cb.checked = !cb.checked; 
-                    }
-                };
-                container.appendChild(div);
-            });
-        }
-
-        function getFormattedDate() {
-            const now = new Date();
-            return now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ', ' + 
-                   now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
-        }
-
-        function handlePendaftaran(e) {
-            e.preventDefault();
-            const kel = document.getElementById('kelurahan').value;
-            const nik = document.getElementById('nik').value;
-            const no_kk = document.getElementById('no_kk').value;
-            const nama = document.getElementById('nama').value;
-            const no_atm = document.getElementById('no_atm').value;
-            const kategori = document.getElementById('kategori_penerima').value;
-            const nama_pengisi = document.getElementById('nama_pengisi').value;
-            
-            // Validasi Kritis menggunakan Modal Kustom
-            if (no_kk.length < 16) {
-                openModal("Nomor KK Tidak Valid", "Nomor Kartu Keluarga yang Anda masukkan kurang dari 16 digit. Silakan periksa kembali.");
-                return;
-            }
-
-            if (nik.length < 16) {
-                openModal("Nomor KTP Tidak Valid", "Nomor KTP (NIK) yang Anda masukkan kurang dari 16 digit. Silakan lengkapi data Anda.");
-                return;
-            }
-
-            // Validasi Nomor ATM (16 atau 18)
-            if (no_atm.length !== 16 && no_atm.length !== 18) {
-                openModal("Nomor ATM Tidak Valid", "Nomor Kartu ATM harus berjumlah 16 atau 18 digit.");
-                return;
-            }
-
-            const prod = Array.from(document.querySelectorAll('input[name="produk"]:checked')).map(c => {
-                return KOMODITAS_LIST.find(k => k.id === c.value).label;
-            });
-
-            if(prod.length === 0) {
-                openModal("Komoditas Kosong", "Silakan pilih minimal satu jenis komoditas pangan.");
-                return;
-            }
-
-            const id = `PPB-${Math.floor(1000 + Math.random() * 9000)}`;
-            const waktuSekarang = getFormattedDate();
-            
-            savePesanan({ id, nik, no_kk, nama, no_atm, kategori, nama_pengisi, kelurahan: kel, produkNama: prod, status: 'Menunggu', waktu: waktuSekarang });
-
-            document.getElementById('view-form').classList.add('hidden');
-            document.getElementById('view-tiket').classList.remove('hidden');
-            
-            // Render Data ke Tiket
-            document.getElementById('tiket-id').textContent = id;
-            document.getElementById('tiket-nama').textContent = nama;
-            document.getElementById('tiket-kategori').textContent = kategori;
-            document.getElementById('tiket-kk').textContent = no_kk;
-            document.getElementById('tiket-kelurahan').textContent = kel;
-            document.getElementById('tiket-waktu').textContent = waktuSekarang;
-
-            const prodList = document.getElementById('tiket-produk-list');
-            prodList.innerHTML = '';
-            prod.forEach(p => {
-                const item = document.createElement('span');
-                item.className = "bg-blue-50 px-2 py-0.5 rounded text-[10px] border border-blue-100";
-                item.textContent = p;
-                prodList.appendChild(item);
-            });
-
-            generateQR(id);
-            if (window.lucide) lucide.createIcons();
-            window.scrollTo(0, 0);
-        }
-
-        function generateQR(id) {
-            const container = document.getElementById('qrcode-container');
-            container.innerHTML = '';
-            let urlBase = window.location.href.split('?')[0];
-            const finalUrl = `${urlBase}?verify=${id}`;
-            new QRCode(container, { text: finalUrl, width: 160, height: 160, colorDark : "#1e3a8a" });
-        }
-
-        function resetForm() { window.location.href = window.location.pathname; }
-
-        window.onload = () => {
-            initDB();
-            renderProduk(); 
-            if (window.lucide) lucide.createIcons();
+        const views = {
+            form: document.getElementById('view-form'),
+            review: document.getElementById('view-review')
         };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            const katSelect = document.getElementById('input-kategori');
+            const containerSusu = document.getElementById('container-susu');
+            
+            const checkSusuVisibility = (val) => {
+                const susuCheckbox = containerSusu.querySelector('input');
+                if(val === 'KJP') {
+                    containerSusu.classList.remove('hidden');
+                } else {
+                    containerSusu.classList.add('hidden');
+                    susuCheckbox.checked = false;
+                }
+            };
+
+            checkSusuVisibility(katSelect.value);
+            katSelect.addEventListener('change', (e) => checkSusuVisibility(e.target.value));
+
+            // VALIDASI INPUT NAMA (HURUF SAJA)
+            const restrictToLetters = (e) => {
+                e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+            };
+
+            document.getElementById('input-nama_pengisi').addEventListener('input', restrictToLetters);
+            document.getElementById('input-nama_pemilik').addEventListener('input', restrictToLetters);
+
+            // Validasi Angka & Input Lainnya
+            document.getElementById('input-kelurahan').addEventListener('input', e => e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, ''));
+            document.getElementById('input-ktp').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
+            document.getElementById('input-atm').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
+        });
+
+        function switchView(viewName) {
+            currentView = viewName;
+            Object.values(views).forEach(el => el.classList.add('hidden-view'));
+            views[viewName].classList.remove('hidden-view');
+            window.scrollTo(0,0);
+        }
+
+        document.getElementById('form-pendaftaran').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const checkedKomoditas = [...document.querySelectorAll('input[name="komoditas"]:checked')]
+        .map(c => c.value);
+
+    if (checkedKomoditas.length === 0) {
+        showToast('Pilih minimal satu jenis komoditas', 'error');
+        return;
+    }
+
+    const payload = {
+        kk: document.getElementById('input-kk').value,
+        kelurahan: document.getElementById('input-kelurahan').value.trim(),
+        nama_pengisi: document.getElementById('input-nama_pengisi').value.trim(),
+        ktp: document.getElementById('input-ktp').value,
+        nama_pemilik: document.getElementById('input-nama_pemilik').value.trim(),
+        atm: document.getElementById('input-atm').value,
+        kategori: document.getElementById('input-kategori').value,
+        produk: checkedKomoditas.join(', ')
+    };
+
+    if (payload.kk.length !== 16 || payload.ktp.length !== 16 || payload.atm.length !== 16) {
+        showToast('KK, KTP, dan ATM harus 16 digit', 'error');
+        return;
+    }
+
+    toggleLoading(true, 'btn-submit');
+    showGlobalLoading(true);
+
+    try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        showGlobalLoading(false);
+        toggleLoading(false, 'btn-submit');
+
+        if (!result.success) {
+            showToast(result.message, 'error');
+            return;
+        }
+
+        registeredData = { ...payload, id: result.id, waktu: result.waktu};
+        renderReview();
+        switchView('review');
+        showToast('Pendaftaran berhasil !');
+        e.target.reset();
+
+    } catch (err) {
+        showGlobalLoading(false);
+        toggleLoading(false, 'btn-submit');
+        showToast('Gagal menghubungi server', 'error');
+    }
+});
+
+// Fungsi format waktu operasional
+function getWaktuOperasionalText() {
+  const bulan = [
+    'Januari','Februari','Maret','April','Mei','Juni',
+    'Juli','Agustus','September','Oktober','November','Desember'
+  ];
+
+  // Ambil waktu WIB
+  const now = new Date();
+  const wib = new Date(
+    now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
+  );
+
+  const tanggal = String(wib.getDate()).padStart(2, '0');
+  const namaBulan = bulan[wib.getMonth()];
+  const tahun = wib.getFullYear();
+
+  const jam = String(wib.getHours()).padStart(2, '0');
+  const menit = String(wib.getMinutes()).padStart(2, '0');
+
+  return `${tanggal} ${namaBulan} ${tahun}, ${jam}:${menit} WIB`;
+}
+
+        function renderReview() {
+            document.getElementById('review-waktu').textContent = getWaktuOperasionalText();
+            document.getElementById('review-id').textContent = registeredData.id;
+            document.getElementById('review-kk').textContent = registeredData.kk;
+            document.getElementById('review-nama_pemilik').textContent = registeredData.nama_pemilik;
+            document.getElementById('review-produk').textContent = registeredData.produk;
+            const qrData = JSON.stringify({id: registeredData.id, kk: registeredData.kk});
+            document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}`;
+        }
+
+        function toggleLoading(isLoading, btnId) {
+            const btn = document.getElementById(btnId);
+            const loader = document.getElementById('loading-indicator');
+            if(isLoading) { btn.classList.add('hidden'); loader.classList.remove('hidden'); }
+            else { btn.classList.remove('hidden'); loader.classList.add('hidden'); }
+        }
+
+        function showGlobalLoading(show = true) {
+            const el = document.getElementById('global-loading');
+            if (show) {
+            el.classList.remove('hidden');
+            el.classList.add('flex');
+        }   else {
+            el.classList.add('hidden');
+            el.classList.remove('flex');
+        }
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            el.className = `${type === 'success' ? 'bg-green-600' : 'bg-red-600'} px-6 py-3 rounded-lg shadow-lg text-white text-sm font-medium flex items-center gap-2 fade-in`;
+            el.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i> ${msg}`;
+            container.appendChild(el);
+            lucide.createIcons();
+            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
+        }
     </script>
+
+    <!-- FULLSCREEN LOADING OVERLAY -->
+<div id="global-loading"
+     class="fixed inset-0 z-[100] hidden items-center justify-center backdrop-blur-sm bg-black/30">
+  
+  <div class="bg-white rounded-2xl shadow-xl px-8 py-6 flex flex-col items-center gap-4 animate-fadeIn">
+    
+    <!-- Spinner -->
+    <div class="relative w-14 h-14">
+      <div class="absolute inset-0 rounded-full border-4 border-blue-200"></div>
+      <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+    </div>
+
+    <!-- Text -->
+    <p class="text-sm font-medium text-gray-700 tracking-wide">
+      Memproses data, mohon tunggu...
+    </p>
+
+  </div>
+</div>
+
+<script>
+// ================================
+// KONFIGURASI JADWAL (SAMA DENGAN APPS SCRIPT)
+// ================================
+const OPERASIONAL_TAHUN  = 2026;
+const OPERASIONAL_BULAN  = 3;  // Maret
+const OPERASIONAL_TANGGAL = 1;
+
+const JAM_BUKA  = 8;   // 08.00 WIB
+const JAM_TUTUP = 23;  // 23.00 WIB
+
+
+function cekJamOperasional() {
+
+  const now = new Date();
+  const wib = new Date(
+    now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
+  );
+
+  const tahun = wib.getFullYear();
+  const bulan = wib.getMonth() + 1;
+  const tanggal = wib.getDate();
+  const jam = wib.getHours();
+  const menit = wib.getMinutes();
+  const totalMenit = jam * 60 + menit;
+
+  const tanggalSesuai =
+    tahun === OPERASIONAL_TAHUN &&
+    bulan === OPERASIONAL_BULAN &&
+    tanggal === OPERASIONAL_TANGGAL;
+
+  const jamSesuai =
+    totalMenit >= JAM_BUKA * 60 &&
+    totalMenit <= JAM_TUTUP * 60;
+
+  const cover = document.getElementById('operasional-cover');
+
+  // Isi informasi tanggal & jam
+  const namaBulan = [
+    'Januari','Februari','Maret','April','Mei','Juni',
+    'Juli','Agustus','September','Oktober','November','Desember'
+  ];
+
+  document.getElementById('cover-tanggal').textContent =
+    `${OPERASIONAL_TANGGAL} ${namaBulan[OPERASIONAL_BULAN - 1]} ${OPERASIONAL_TAHUN}`;
+
+  document.getElementById('cover-jam-buka').textContent =
+    JAM_BUKA.toString().padStart(2,'0') + '.00 WIB';
+
+  document.getElementById('cover-jam-tutup').textContent =
+    JAM_TUTUP.toString().padStart(2,'0') + '.00 WIB';
+
+
+  if (tanggalSesuai && jamSesuai) {
+    // ✅ BUKA → Cover hilang
+    cover.classList.add('hidden');
+  } else {
+    // ❌ TUTUP → Cover muncul
+    cover.classList.remove('hidden');
+    cover.classList.add('flex');
+  }
+}
+
+// Jalankan saat halaman load
+document.addEventListener('DOMContentLoaded', cekJamOperasional);
+</script>
+
 </body>
 </html>
