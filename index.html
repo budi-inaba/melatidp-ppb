@@ -541,10 +541,14 @@ function getWaktuOperasionalText() {
             document.getElementById('review-kk').textContent = registeredData.kk;
             document.getElementById('review-nama_pemilik').textContent = registeredData.nama_pemilik;
             document.getElementById('review-produk').textContent = registeredData.produk;
-           const baseUrl = window.location.origin + window.location.pathname;
-           const qrUrl = `${baseUrl}?id=${registeredData.id}`;
-           document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUrl)}`;
-        }
+            // =========================// URL REAL VERIFIKASI// =========================
+            const baseUrl = window.location.origin;
+            const path = window.location.pathname.replace('index.html','');
+            const verifikasiUrl = `${baseUrl}${path}verifikasi.html?id=${registeredData.id}`;
+
+            document.getElementById('qr-image').src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifikasiUrl)}`;
+}
 
         function toggleLoading(isLoading, btnId) {
             const btn = document.getElementById(btnId);
