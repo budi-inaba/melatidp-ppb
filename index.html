@@ -313,6 +313,39 @@
                          class="h-8 mx-auto" 
                          onerror="handleImgError(this)">
                 </div>
+
+                <!-- VIEW: VERIFIKASI QR -->
+<div id="view-verifikasi" class="max-w-md mx-auto py-10 px-4 hidden-view fade-in">
+  <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
+
+    <div id="verifikasi-loading" class="py-6">
+      <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+      <p class="text-sm text-gray-500 mt-4">Memverifikasi data...</p>
+    </div>
+
+    <div id="verifikasi-result" class="hidden space-y-4">
+
+      <div id="verifikasi-status-icon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto"></div>
+
+      <h2 id="verifikasi-status-text" class="text-xl font-bold"></h2>
+
+      <div class="text-left text-sm space-y-2 border-t pt-4">
+        <div><strong>ID:</strong> <span id="v-id"></span></div>
+        <div><strong>Nama:</strong> <span id="v-nama"></span></div>
+        <div><strong>KK:</strong> <span id="v-kk"></span></div>
+        <div><strong>Produk:</strong> <span id="v-produk"></span></div>
+        <div><strong>Status:</strong> <span id="v-status"></span></div>
+      </div>
+
+      <button onclick="switchView('form')" 
+        class="mt-6 text-blue-600 text-sm font-medium hover:underline">
+        Kembali ke Form
+      </button>
+
+    </div>
+
+  </div>
+</div>
                 
                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i data-lucide="check-circle" class="text-green-600 w-8 h-8"></i>
