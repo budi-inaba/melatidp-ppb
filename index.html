@@ -162,7 +162,7 @@
                     <div class="text-left bg-gray-50 p-4 rounded-xl text-xs border border-gray-100 space-y-3 mb-6">
                         <div class="flex flex-col border-b border-gray-200 pb-2">
                             <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Waktu Daftar</span> 
-                            <span id="tiket-waktu" class="font-bold text-gray-800"></span>
+                            <span id="tiket-waktu" class="font-bold text-green-600"></span>
                         </div>
                         <div class="flex flex-col border-b border-gray-200 pb-2">
                             <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider mb-1">Kelurahan</span> 
@@ -250,13 +250,13 @@
         }
 
         const KOMODITAS_LIST = [
-            { id: 'ayam', nama: 'Ayam 1 ekor', harga: 'Rp 8.000' },
-            { id: 'daging', nama: 'Daging Sapi 1Kg', harga: 'Rp 35.000' },
-            { id: 'telur', nama: 'Telur Ayam 1 Tray', harga: 'Rp 10.000' },
-            { id: 'beras', nama: 'Beras Premium 5Kg', harga: 'Rp 30.000' },
-            { id: 'ikan', nama: 'Ikan Kembung 1Kg', harga: 'Rp 13.000' },
-            { id: 'susu', nama: 'Susu UHT 1 Karton', harga: 'Rp 30.000' },
-        ];
+    { id: 'ayam', label: 'Ayam', nama: 'Ayam 1 ekor', harga: 'Rp 8.000' },
+    { id: 'daging', label: 'Daging Sapi', nama: 'Daging Sapi 1Kg', harga: 'Rp 35.000' },
+    { id: 'telur', label: 'Telur', nama: 'Telur Ayam 1 Tray', harga: 'Rp 10.000' },
+    { id: 'beras', label: 'Beras', nama: 'Beras Premium 5Kg', harga: 'Rp 30.000' },
+    { id: 'ikan', label: 'Ikan', nama: 'Ikan Kembung 1Kg', harga: 'Rp 13.000' },
+    { id: 'susu', label: 'Susu', nama: 'Susu UHT 1 Karton', harga: 'Rp 30.000' },
+];
 
         function initDB() {
             if (!localStorage.getItem('db_pesanan')) localStorage.setItem('db_pesanan', JSON.stringify([]));
@@ -328,7 +328,7 @@
             }
 
             const prod = Array.from(document.querySelectorAll('input[name="produk"]:checked')).map(c => {
-                return KOMODITAS_LIST.find(k => k.id === c.value).nama;
+                return KOMODITAS_LIST.find(k => k.id === c.value).label;
             });
 
             if(prod.length === 0) {
