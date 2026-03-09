@@ -645,7 +645,7 @@ function cekJamOperasional() {
   ];
 
   document.getElementById('cover-tanggal').textContent =
-    `${OPERASIONAL_TANGGAL} ${namaBulan[OPERASIONAL_BULAN - 1]} ${OPERASIONAL_TAHUN}`;
+    `${String(OPERASIONAL_TANGGAL).padStart(2, '0')} ${namaBulan[OPERASIONAL_BULAN - 1]} ${OPERASIONAL_TAHUN}`;
 
   document.getElementById('cover-jam-buka').textContent =
     JAM_BUKA.toString().padStart(2,'0') + '.00 WIB';
