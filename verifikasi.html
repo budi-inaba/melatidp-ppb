@@ -90,10 +90,10 @@
         <div id="result" class="hidden space-y-8">
 
           <!-- STATUS ICON BESAR -->
-          <div class="flex justify-center">
-            <div id="status-icon" class="w-28 h-28 rounded-3xl flex items-center justify-center text-7xl shadow-inner bg-gradient-to-br from-white/10 to-transparent"></div>
-          </div>
-          <h2 id="status-text" class="text-3xl font-bold text-center tracking-tight"></h2>
+        <div class="flex justify-center">
+        <div id="status-icon" class="w-24 h-24 rounded-3xl flex items-center justify-center text-6xl shadow-inner bg-gradient-to-br from-white/10 to-transparent"></div>
+        </div>
+        <h2 id="status-text" class="text-2xl font-bold text-center tracking-tight"></h2>
 
           <!-- DATA PREMIUM -->
          <div class="bg-slate-50/70 backdrop-blur-sm rounded-2xl p-6 space-y-5 border border-slate-100/50 text-sm">
@@ -234,66 +234,64 @@
     }
 
     async function verify() {
-      resetVerificationUI();
-
-      const params = new URLSearchParams(window.location.search);
-      currentId = params.get("id");
-
-      if (!currentId) {
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('result').classList.remove('hidden');
-        document.getElementById('status-text').innerHTML = `<span class="text-red-600">QR Code Tidak Valid</span>`;
-        return;
-      }
-
-      try {
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getById&id=${currentId}`);
-        const data = await res.json();
-
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('result').classList.remove('hidden');
-
-        if (!data.success) {
-          document.getElementById('status-icon').innerHTML = `<i data-lucide="x-circle" class="text-red-500"></i>`;
-          document.getElementById('status-text').innerHTML = `<span class="text-red-600">TIDAK VALID</span>`;
-          lucide.createIcons();
-          return;
-        }
-
-        isiDataVerifikasi(data);
-      } catch (err) {
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('result').classList.remove('hidden');
-        document.getElementById('status-text').innerHTML = `<span class="text-red-600">Gagal menghubungi server</span>`;
-      }
+  resetVerificationUI();
+  const params = new URLSearchParams(window.location.search);
+  currentId = params.get("id");
+  if (!currentId) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('result').classList.remove('hidden');
+    document.getElementById('status-icon').innerHTML = `<i data-lucide="x-circle" class="w-10 h-10 text-red-500"></i>`;
+    document.getElementById('status-text').innerHTML = `<span class="text-red-600">QR Code Tidak Valid</span>`;
+    lucide.createIcons();
+    return;
+  }
+  try {
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getById&id=${currentId}`);
+    const data = await res.json();
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('result').classList.remove('hidden');
+    if (!data.success) {
+      document.getElementById('status-icon').innerHTML = `<i data-lucide="x-circle" class="w-10 h-10 text-red-500"></i>`;
+      document.getElementById('status-text').innerHTML = `<span class="text-red-600">TIDAK VALID</span>`;
+      lucide.createIcons();
+      return;
     }
+    isiDataVerifikasi(data);
+  } catch (err) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('result').classList.remove('hidden');
+    document.getElementById('status-icon').innerHTML = `<i data-lucide="x-circle" class="w-10 h-10 text-red-500"></i>`;
+    document.getElementById('status-text').innerHTML = `<span class="text-red-600">Gagal menghubungi server</span>`;
+    lucide.createIcons();
+  }
+}
 
     function isiDataVerifikasi(data) {
-      document.getElementById('v-waktu').textContent   = data.waktu   || "—";
-      document.getElementById('v-id').textContent     = data.id      || "—";
-      document.getElementById('v-kk').textContent     = data.kk      || "—";
-      document.getElementById('v-nama').textContent   = data.nama    || "—";
-      document.getElementById('v-kategori').textContent = data.kategori || "—";
-      document.getElementById('v-produk').textContent = data.produk  || "—";
+  document.getElementById('v-waktu').textContent = data.waktu || "—";
+  document.getElementById('v-id').textContent = data.id || "—";
+  document.getElementById('v-kk').textContent = data.kk || "—";
+  document.getElementById('v-nama').textContent = data.nama || "—";
+  document.getElementById('v-kategori').textContent = data.kategori || "—";
+  document.getElementById('v-produk').textContent = data.produk || "—";
 
-      const statusEl = document.getElementById('v-status');
-      const approveBtn = document.getElementById('btn-approve');
+  const statusEl = document.getElementById('v-status');
+  const approveBtn = document.getElementById('btn-approve');
 
-      if (data.status === "Disetujui") {
-        document.getElementById('status-icon').innerHTML = `<i data-lucide="check-circle" class="w-12 h-12 text-green-600"></i>`;
-        document.getElementById('status-text').innerHTML = `<span class="text-emerald-600">DATA VALID</span>`;
-        statusEl.className = "bg-emerald-100 text-emerald-700 px-6 py-2 rounded-2xl text-sm font-bold";
-        statusEl.textContent = "Disetujui";
-        approveBtn.classList.add('hidden');
-      } else {
-        document.getElementById('status-icon').innerHTML = `<i data-lucide="clock" class="text-amber-500"></i>`;
-        document.getElementById('status-text').innerHTML = `<span class="text-amber-600">MENUNGGU VERIFIKASI</span>`;
-        statusEl.className = "bg-amber-100 text-amber-700 px-6 py-2 rounded-2xl text-sm font-bold";
-        statusEl.textContent = data.status || "Menunggu";
-        approveBtn.classList.remove('hidden');
-      }
-      lucide.createIcons();
-    }
+  if (data.status === "Disetujui") {
+    document.getElementById('status-icon').innerHTML = `<i data-lucide="check-circle" class="w-10 h-10 text-green-600"></i>`;
+    document.getElementById('status-text').innerHTML = `<span class="text-emerald-600">DATA VALID</span>`;
+    statusEl.className = "bg-emerald-100 text-emerald-700 px-6 py-2 rounded-2xl text-sm font-bold";
+    statusEl.textContent = "Disetujui";
+    approveBtn.classList.add('hidden');
+  } else {
+    document.getElementById('status-icon').innerHTML = `<i data-lucide="clock" class="w-10 h-10 text-amber-500"></i>`;
+    document.getElementById('status-text').innerHTML = `<span class="text-amber-600">MENUNGGU VERIFIKASI</span>`;
+    statusEl.className = "bg-amber-100 text-amber-700 px-6 py-2 rounded-2xl text-sm font-bold";
+    statusEl.textContent = data.status || "Menunggu";
+    approveBtn.classList.remove('hidden');
+  }
+  lucide.createIcons();
+}
 
     // ================== SCAN QR PREMIUM ==================
     function startQRScanner() {
