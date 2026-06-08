@@ -2292,6 +2292,156 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(cekJamOperasional, 30000);
 });
 
+    // ===============================
+// 🔐 COVER LOGIN - ADMIN BYPASS
+// ===============================
+
+function openCoverLogin() {
+  const modal = document.getElementById('cover-login-modal');
+  modal.classList.remove('hidden');
+  
+  // Trigger animation setelah display tidak hidden
+  requestAnimationFrame(() => {
+    modal.classList.add('show-modal');
+  });
+  
+  lucide.createIcons();
+  setTimeout(() => document.getElementById('cover-username').focus(), 300);
+}
+
+function closeCoverLogin() {
+  const modal = document.getElementById('cover-login-modal');
+  modal.classList.remove('show-modal');
+  
+  // Tunggu animasi selesai baru hide
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 300);
+  
+  // Reset form
+  document.getElementById('cover-login-error-wrap').classList.add('hidden');
+  document.getElementById('cover-username').value = '';
+  document.getElementById('cover-password').value = '';
+  resetCoverLoginBtn();
+}
+
+function toggleCoverPassword() {
+  const input = document.getElementById('cover-password');
+  const icon = document.getElementById('cover-icon-eye');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.setAttribute('data-lucide', 'eye-off');
+  } else {
+    input.type = 'password';
+    icon.setAttribute('data-lucide', 'eye');
+  }
+  lucide.createIcons();
+}
+
+function showCoverLoginError(message) {
+  const wrap = document.getElementById('cover-login-error-wrap');
+  const errorText = document.getElementById('cover-login-error');
+  const panel = document.getElementById('cover-login-panel');
+  
+  errorText.textContent = message;
+  wrap.classList.remove('hidden');
+  
+  // Shake animation
+  panel.classList.add('shake');
+  setTimeout(() => panel.classList.remove('shake'), 400);
+  
+  lucide.createIcons();
+}
+
+function resetCoverLoginBtn() {
+  const btn = document.getElementById('btn-cover-login');
+  btn.disabled = false;
+  btn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> <span>Masuk</span>';
+  lucide.createIcons();
+}
+
+async function coverLoginAdmin() {
+  const btn = document.getElementById('btn-cover-login');
+  const username = document.getElementById('cover-username').value.trim();
+  const password = document.getElementById('cover-password').value.trim();
+  
+  // Validasi
+  if (!username || !password) {
+    showCoverLoginError('Username dan password wajib diisi');
+    return;
+  }
+  
+  // Loading state
+  btn.disabled = true;
+  btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> <span>Memverifikasi...</span>';
+  lucide.createIcons();
+  
+  // Hide previous error
+  document.getElementById('cover-login-error-wrap').classList.add('hidden');
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'loginAdmin',
+        username: username,
+        password: password
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      showCoverLoginError('Username atau password salah');
+      resetCoverLoginBtn();
+      return;
+    }
+
+    // ✅ SET BYPASS FLAG
+    localStorage.setItem('adminBypass', 'true');
+    
+    // ✅ Hide modal & cover
+    closeCoverLogin();
+    
+    const cover = document.getElementById('operasional-cover');
+    cover.style.transition = 'opacity 0.5s ease';
+    cover.style.opacity = '0';
+    
+    setTimeout(() => {
+      cover.classList.add('hidden');
+      cover.style.opacity = '';
+      document.body.classList.remove('overflow-hidden');
+    }, 500);
+    
+    showToast('✅ Login berhasil! Akses formulir dibuka.');
+    console.log('🔓 Admin bypass activated at:', new Date().toLocaleTimeString('id-ID'));
+
+  } catch (err) {
+    console.error('❌ Cover login error:', err);
+    showCoverLoginError('Gagal menghubungi server. Periksa koneksi internet.');
+    resetCoverLoginBtn();
+  }
+}
+
+// Tutup modal jika klik di luar panel
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('cover-login-modal');
+  if (e.target === modal) {
+    closeCoverLogin();
+  }
+});
+
+// Tutup modal dengan tombol ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('cover-login-modal');
+    if (!modal.classList.contains('hidden')) {
+      closeCoverLogin();
+    }
+  }
+});
+
 // ===============================
 // AUTO MODE VERIFIKASI
 // ===============================
