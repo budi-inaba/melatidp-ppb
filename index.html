@@ -2236,6 +2236,20 @@ const JAM_TUTUP = 23;  // 11.00 WIB
 
 function cekJamOperasional() {
 
+  const cover = document.getElementById('operasional-cover');
+
+  // ==============================
+  // ✅ CEK ADMIN BYPASS DULU
+  // ==============================
+  if (localStorage.getItem('adminBypass') === 'true') {
+    cover.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    return; // ⛔ Stop, jangan cek jam lagi
+  }
+
+  // ==============================
+  // ⏰ CEK JAM OPERASIONAL NORMAL
+  // ==============================
   const now = new Date();
   const wib = new Date(
     now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })
@@ -2257,8 +2271,6 @@ function cekJamOperasional() {
     totalMenit >= JAM_BUKA * 60 &&
     totalMenit <= JAM_TUTUP * 60;
 
-  const cover = document.getElementById('operasional-cover');
-
   // Isi informasi tanggal & jam
   const namaBulan = [
     'Januari','Februari','Maret','April','Mei','Juni',
@@ -2274,15 +2286,14 @@ function cekJamOperasional() {
   document.getElementById('cover-jam-tutup').textContent =
     JAM_TUTUP.toString().padStart(2,'0') + '.00 WIB';
 
-
   if (tanggalSesuai && jamSesuai) {
     // ✅ BUKA → Cover hilang
     cover.classList.add('hidden');
-  document.body.classList.remove('overflow-hidden');
+    document.body.classList.remove('overflow-hidden');
   } else {
     // ❌ TUTUP → Cover muncul
     cover.classList.remove('hidden');
-  document.body.classList.add('overflow-hidden');
+    document.body.classList.add('overflow-hidden');
   }
 }
 
