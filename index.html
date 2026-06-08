@@ -357,7 +357,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaoSCaSWuqPdZYZRZxfh_4DFDYpCR6rIGgUMjlJS9hOGt2lF5MZaaens7JRz3BgPVOsg/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAVELaQ7X2rTAK6spiJuCPBRCIFycEVF47G3VojG3681Tc2b4yfty9RaY-v8sl7zHHgQ/exec"; 
 
         // ===============================
 // 🔧 KONFIGURASI MONITORING STOK
@@ -2131,28 +2131,33 @@ async function saveEditStok() {
   btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> Menyimpan...`;
   lucide.createIcons();
 
-    const payload = {
-    id: document.getElementById('modal-stok-id').value,
+  const payload = {
+    action: "updateStok",
+    id: document.getElementById('modal-stok-id').value.trim(), // ✅ Trim ID
     stok_duripulo: Number(document.getElementById('modal-stok-duripulo').value) || 0,
     stok_lainnya: Number(document.getElementById('modal-stok-lainnya').value) || 0
   };
 
+  console.log('📤 Mengirim update stok:', payload); // ✅ Debug log
+
   try {
     const res = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
-      body: JSON.stringify({ action: "updateStok", ...payload })
+      body: JSON.stringify(payload)
     });
     const result = await res.json();
+    
+    console.log('📥 Response:', result); // ✅ Debug log
 
     if (result.success) {
       showToast("✅ Stok berhasil diperbarui", "success");
       closeEditStokModal();
-      loadStokKomoditas();
+      loadStokKomoditas(); // Refresh data
     } else {
       showToast("❌ " + (result.message || "Gagal memperbarui stok"), "error");
     }
   } catch (err) {
-    console.error(err);
+    console.error('❌ Error:', err);
     showToast("❌ Gagal koneksi ke server", "error");
   } finally {
     btn.disabled = false;
@@ -2160,7 +2165,7 @@ async function saveEditStok() {
     lucide.createIcons();
   }
 }
-
+        
 // Tutup modal jika klik di luar area panel
 document.addEventListener('DOMContentLoaded', function() {
   const modal = document.getElementById('edit-stok-modal');
