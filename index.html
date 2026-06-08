@@ -221,7 +221,37 @@
 .inline-flex.items-center.gap-1\.5.px-2\.5.py-1.bg-white:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}       
+}    
+
+        /* ===============================
+   COVER LOGIN MODAL
+   =============================== */
+#cover-login-modal.show-modal #cover-login-panel {
+  transform: scale(1);
+  opacity: 1;
+}
+
+#cover-login-modal {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#cover-login-modal.show-modal {
+  opacity: 1;
+}
+
+/* Shake animation for error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
         
     </style>
 </head>
