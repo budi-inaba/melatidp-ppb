@@ -303,9 +303,24 @@
 
   </div> <!-- PENUTUP AREA TENGAH -->
 
-  <!-- FOOTER COVER -->
-  <div class="text-center text-white/70 text-sm pb-6 pt-2 relative z-10">
-    © 2026 RPTRA Melati Duri Pulo • PPB
+    <!-- FOOTER COVER -->
+  <div class="text-center pb-6 pt-2 relative z-10">
+    <p class="text-white/60 text-xs mb-3">© 2026 RPTRA Melati Duri Pulo • PPB</p>
+    
+    <!-- LOGIN ADMIN BUTTON -->
+    <button onclick="openCoverLogin()" 
+      class="inline-flex items-center gap-2 
+             px-4 py-2 rounded-full
+             bg-white/10 hover:bg-white/20 
+             border border-white/20 hover:border-white/40
+             text-white/70 hover:text-white
+             text-xs font-medium
+             backdrop-blur-sm
+             transition-all duration-300
+             hover:scale-105 active:scale-95">
+      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+      <span>Login Admin</span>
+    </button>
   </div>
 
 </div>
@@ -2439,6 +2454,98 @@ document.addEventListener('DOMContentLoaded', cekModeVerifikasi);
     
   </div>
 </div>
+
+ <!-- ===============================
+     MODAL LOGIN ADMIN (COVER PAGE)
+     =============================== -->
+<div id="cover-login-modal" 
+     class="hidden fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 backdrop-blur-md transition-all duration-300">
+  
+  <div class="bg-white w-[92%] max-w-sm rounded-3xl shadow-2xl p-6 
+              transform transition-all duration-300 scale-95 opacity-0" 
+       id="cover-login-panel">
+    
+    <!-- Header -->
+    <div class="text-center mb-5">
+      <div class="flex justify-center mb-4">
+        <img src="login.png"
+             alt="Login Admin"
+             class="w-28 h-28 object-contain drop-shadow-lg">
+      </div>
+        
+      <h3 class="text-lg font-bold text-gray-800">Admin Access</h3>
+      <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+        Akses khusus untuk manajemen sistem<br>di luar jam operasional
+      </p>
+    </div>
+    
+    <!-- Divider -->
+    <div class="border-t border-gray-100 mb-5"></div>
+    
+    <!-- Form -->
+    <div class="space-y-3">
+      <!-- Username -->
+      <div class="relative group">
+        <i data-lucide="user" class="absolute left-3.5 top-3 w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition"></i>
+        <input id="cover-username" type="text" placeholder="Username"
+          class="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl 
+                 focus:ring-2 focus:ring-purple-500/30 focus:border-purple-400 
+                 outline-none text-sm transition-all"
+          onkeydown="if(event.key==='Enter') document.getElementById('cover-password').focus()">
+      </div>
+      
+      <!-- Password -->
+      <div class="relative group">
+        <i data-lucide="lock" class="absolute left-3.5 top-3 w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition"></i>
+        <input id="cover-password" type="password" placeholder="Password"
+          class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl 
+                 focus:ring-2 focus:ring-purple-500/30 focus:border-purple-400 
+                 outline-none text-sm transition-all"
+          onkeydown="if(event.key==='Enter') coverLoginAdmin()">
+        <button type="button" onclick="toggleCoverPassword()" 
+          class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 transition p-0.5">
+          <i id="cover-icon-eye" data-lucide="eye" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Error message -->
+    <div id="cover-login-error-wrap" class="hidden mt-3">
+      <div class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-100 rounded-xl">
+        <i data-lucide="alert-circle" class="w-4 h-4 text-red-500 flex-shrink-0"></i>
+        <p id="cover-login-error" class="text-red-600 text-xs font-medium"></p>
+      </div>
+    </div>
+    
+    <!-- Buttons -->
+    <div class="flex gap-2.5 mt-5">
+      <button onclick="closeCoverLogin()" 
+        class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 
+               rounded-xl hover:bg-gray-50 transition text-sm font-medium
+               active:scale-95">
+        Batal
+      </button>
+      <button onclick="coverLoginAdmin()" id="btn-cover-login"
+        class="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 
+               text-white rounded-xl 
+               hover:from-purple-700 hover:to-pink-700 
+               transition-all text-sm font-medium 
+               flex items-center justify-center gap-2 
+               shadow-lg shadow-purple-200/50
+               hover:shadow-purple-300/60
+               active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+        <i data-lucide="log-in" class="w-4 h-4"></i> 
+        <span>Masuk</span>
+      </button>
+    </div>
+    
+    <!-- Footer info -->
+    <p class="text-center text-[10px] text-gray-400 mt-4">
+      🔒 Koneksi terenkripsi • Hanya untuk administrator
+    </p>
+    
+  </div>
+</div>   
     
 </body>
 </html>
