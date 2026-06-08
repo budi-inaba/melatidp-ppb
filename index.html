@@ -1681,12 +1681,15 @@ function showToast(msg, type = 'success') {
         
 function logoutAdmin() {
   localStorage.removeItem('isAdmin');
+  localStorage.removeItem('adminBypass'); // 🔥 Hapus bypass juga
 
   showToast("Logout berhasil");
 
   switchView('login');
-}
-        
+  
+  // 🔥 Cek ulang jam operasional → cover bisa muncul lagi
+  setTimeout(() => cekJamOperasional(), 300);
+}        
 // ==========================
 // TOGGLE PASSWORD
 // ==========================
