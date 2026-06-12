@@ -357,7 +357,7 @@
 
     <!-- KONFIGURASI -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAVELaQ7X2rTAK6spiJuCPBRCIFycEVF47G3VojG3681Tc2b4yfty9RaY-v8sl7zHHgQ/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsyQPi1KdnWDX8NYeH3hWSq7vBPHhTyvCoi_IM8ooiNXABNRhhrRLGdwqzuKuaN_yckQ/exec"; 
 
         // ===============================
 // 🔧 KONFIGURASI MONITORING STOK
@@ -2113,25 +2113,34 @@ rt
 // ===============================
 // MODAL EDIT STOK KOMODITAS
 // ===============================
+// ===============================
+// MODAL EDIT STOK KOMODITAS
+// ===============================
 function openEditStokModal(id, nama, duriPulo, lainnya) {
+  console.log('🎯 openEditStokModal dipanggil:', { id, nama, duriPulo, lainnya });
+  
   try {
-    // Set nilai input
+    // Ambil elemen modal
     const elId       = document.getElementById('modal-stok-id');
     const elNamaAsli = document.getElementById('modal-nama-asli');
     const elNamaText = document.getElementById('modal-nama-komoditas');
     const elDuriPulo = document.getElementById('modal-stok-duriPulo'); 
     const elLainnya  = document.getElementById('modal-stok-lainnya');
 
-    if (!elId || !elDuriPulo || !elLainnya) {
+    // Validasi elemen modal ada
+    if (!elId || !elNamaAsli || !elNamaText || !elDuriPulo || !elLainnya) {
       console.error('❌ Elemen modal tidak ditemukan');
       showToast('Modal tidak tersedia', 'error');
       return;
     }
 
-       // ✅ Fallback: jika ID kosong, gunakan nama
-    const finalId = (!id || id === 'undefined' || id === 'null') ? nama : id;
+    // ✅ Fallback: jika ID kosong/undefined/null, gunakan nama
+    const finalId = (!id || id === 'undefined' || id === 'null' || id === '') ? nama : id;
+    
+    console.log('✅ ID final:', finalId);
 
-    elId.value       = id || '';
+    // Set nilai ke input fields
+    elId.value       = finalId || '';
     elNamaAsli.value = nama || '';
     elNamaText.textContent = nama || '';
     elDuriPulo.value = Number(duriPulo) || 0;
@@ -2164,7 +2173,7 @@ function openEditStokModal(id, nama, duriPulo, lainnya) {
     showToast('Gagal membuka modal edit', 'error');
   }
 }
-
+        
 function closeEditStokModal() {
   const modal = document.getElementById('edit-stok-modal');
   modal.classList.add('hidden');
