@@ -450,7 +450,9 @@ function renderStokDashboard(stokData) {
     const totalLabel   = total === 0 ? 'STOK HABIS' : 'TOTAL';
 
          // ✅ SESUDAH (Escape yang benar)
-const safeId = String(data.id || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+// Gunakan ID jika ada, jika tidak gunakan nama
+const idValue = data.id || nama; // ✅ Fallback ke nama
+const safeId = String(idValue).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
 const safeNama = nama.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
 
 cardsHTML += `
@@ -2126,6 +2128,9 @@ function openEditStokModal(id, nama, duriPulo, lainnya) {
       return;
     }
 
+       // ✅ Fallback: jika ID kosong, gunakan nama
+    const finalId = (!id || id === 'undefined' || id === 'null') ? nama : id;
+
     elId.value       = id || '';
     elNamaAsli.value = nama || '';
     elNamaText.textContent = nama || '';
@@ -2173,9 +2178,13 @@ async function saveEditStok() {
   btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> Menyimpan...`;
   lucide.createIcons();
 
-    const id = document.getElementById('modal-stok-id').value.trim();
-  if (!id) {
-    showToast("ID komoditas tidak valid", "error");
+  const id = document.getElementById('modal-stok-id').value.trim();
+  const nama = document.getElementById('modal-nama-asli').value.trim();
+  
+  console.log('💾 Save stok:', { id, nama });
+
+  if (!id && !nama) {
+    showToast("ID dan nama komoditas tidak valid", "error");
     btn.disabled = false;
     btn.innerHTML = originalText;
     lucide.createIcons();
@@ -2184,12 +2193,12 @@ async function saveEditStok() {
 
   const payload = {
     action: "updateStok",
-    id: document.getElementById('modal-stok-id').value.trim(), // ✅ Trim ID
+    id: id || nama, // ✅ Gunakan nama jika ID kosong
     stok_duriPulo: Number(document.getElementById('modal-stok-duriPulo').value) || 0,
     stok_lainnya: Number(document.getElementById('modal-stok-lainnya').value) || 0
   };
 
-  console.log('📤 Mengirim update stok:', payload); // ✅ Debug log
+  console.log('📤 Mengirim update stok:', payload);
 
   try {
     const res = await fetch(GOOGLE_SCRIPT_URL, {
@@ -2198,7 +2207,7 @@ async function saveEditStok() {
     });
     const result = await res.json();
     
-    console.log('📥 Response:', result); // ✅ Debug log
+    console.log('📥 Response:', result);
 
     if (result.success) {
       showToast("✅ Stok berhasil diperbarui", "success");
@@ -2227,18 +2236,18 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-        // ✅ Fungsi handler untuk klik card (dipanggil dari inline onclick)
+     // ✅ Fungsi handler untuk klik card (dipanggil dari inline onclick)
 function handleCardClick(id, nama, duriPulo, lainnya) {
   console.log('📦 Card clicked:', { id, nama, duriPulo, lainnya });
   
-  // Validasi ID
-  if (!id || id === 'undefined' || id === 'null') {
+  // Validasi ID yang lebih longgar
+  if (id === undefined || id === null || id === '' || id === 'undefined' || id === 'null') {
     console.error('❌ ID tidak valid:', id);
-    showToast('ID komoditas tidak valid', 'error');
+    showToast('ID komoditas tidak ditemukan. Silakan refresh halaman.', 'error');
     return;
   }
   
-  openEditStokModal(id, nama, duriPulo, lainnya);
+  openEditStokModal(String(id), String(nama), Number(duriPulo), Number(lainnya));
 }
 
 // ===============================
