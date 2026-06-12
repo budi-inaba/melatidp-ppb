@@ -449,16 +449,14 @@ function renderStokDashboard(stokData) {
     const totalClass   = total === 0 ? 'text-red-600' : 'text-gray-800';
     const totalLabel   = total === 0 ? 'STOK HABIS' : 'TOTAL';
 
-      const safeNama = nama.replace(/'/g, "\\'");
-  const safeId = String(data.id || '').replace(/'/g, "\\'");
+           const safeNama = nama.replace(/'/g, "\\'");
+      const safeId = String(data.id || '').replace(/'/g, "\\'");
     
       cardsHTML += `
-  <div data-stok-id="${data.id}" 
-       data-stok-nama="${nama.replace(/"/g, '&quot;')}" 
-       data-stok-duri="${duriPulo}" 
-       data-stok-lain="${lainnya}"
-       class="stok-card-click bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full min-w-0 cursor-pointer group">
-    <!-- Header -->
+  <div onclick="handleCardClick('${safeId}', '${safeNama}', ${duriPulo}, ${lainnya})" 
+       class="bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full min-w-0 cursor-pointer group">
+       
+       <!-- Header -->
     <div class="flex items-center gap-1.5 mb-1.5">
       <div class="bg-blue-50 p-1.5 rounded-lg flex-shrink-0 group-hover:bg-blue-100 transition">
         <i data-lucide="${icon}" class="w-3.5 h-3.5 text-blue-600"></i>
