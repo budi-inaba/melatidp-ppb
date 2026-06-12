@@ -449,11 +449,12 @@ function renderStokDashboard(stokData) {
     const totalClass   = total === 0 ? 'text-red-600' : 'text-gray-800';
     const totalLabel   = total === 0 ? 'STOK HABIS' : 'TOTAL';
 
-           const safeNama = nama.replace(/'/g, "\\'");
-      const safeId = String(data.id || '').replace(/'/g, "\\'");
-    
-      cardsHTML += `
-  <div onclick="handleCardClick('${safeId}', '${safeNama}', ${duriPulo}, ${lainnya})" 
+         // ✅ SESUDAH (Escape yang benar)
+const safeId = String(data.id || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+const safeNama = nama.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+
+cardsHTML += `
+  <div onclick="handleCardClick('${safeId}', '${safeNama}', ${duriPulo}, ${lainnya})"  
        class="bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm hover:shadow-md hover:border-blue-400 transition-all flex flex-col h-full min-w-0 cursor-pointer group">
        
        <!-- Header -->
