@@ -411,6 +411,7 @@ async function loadStokKomoditas() {
 // 📊 RENDER DASHBOARD STOK
 // ===============================
 function renderStokDashboard(stokData) {
+    console.log('📊 Rendering stok data:', stokData); // ✅ Debug log
   const container = document.getElementById("stok-container");
   const summary   = document.getElementById("stok-summary");
   
@@ -447,6 +448,9 @@ function renderStokDashboard(stokData) {
     const lainnyaClass = lainnya === 0 ? 'text-red-600 font-bold' : 'text-green-700';
     const totalClass   = total === 0 ? 'text-red-600' : 'text-gray-800';
     const totalLabel   = total === 0 ? 'STOK HABIS' : 'TOTAL';
+
+      const safeNama = nama.replace(/'/g, "\\'");
+  const safeId = String(data.id || '').replace(/'/g, "\\'");
     
       cardsHTML += `
   <div data-stok-id="${data.id}" 
@@ -1159,33 +1163,6 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
 // realtime saat user mengetik
 document.getElementById('input-kelurahan')
   .addEventListener('input', debounce(loadStokKomoditasForForm, 300));
-
-    // Event delegation untuk klik card stok (dengan debug)
-document.addEventListener('click', function(e) {
-  const card = e.target.closest('.stok-card-click');
-  if (!card) return;
-  
-  e.preventDefault();
-  e.stopPropagation();
-  
-  // Ambil data dari attributes
-  const id       = card.getAttribute('data-stok-id');
-  const nama     = card.getAttribute('data-stok-nama');
-  const duriPulo = Number(card.getAttribute('data-stok-duri')) || 0;
-  const lainnya  = Number(card.getAttribute('data-stok-lain')) || 0;
-  
-  // Debug log
-  console.log('📦 Card clicked:', { id, nama, duriPulo, lainnya });
-  
-  // Validasi ID
-  if (!id) {
-    console.error('❌ ID tidak ditemukan di card:', card);
-    showToast('ID komoditas tidak ditemukan', 'error');
-    return;
-  }
-  
-  openEditStokModal(id, nama, duriPulo, lainnya);
-});
     
 });
 
@@ -2248,6 +2225,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+        // ✅ Fungsi handler untuk klik card (dipanggil dari inline onclick)
+function handleCardClick(id, nama, duriPulo, lainnya) {
+  console.log('📦 Card clicked:', { id, nama, duriPulo, lainnya });
+  
+  // Validasi ID
+  if (!id || id === 'undefined' || id === 'null') {
+    console.error('❌ ID tidak valid:', id);
+    showToast('ID komoditas tidak valid', 'error');
+    return;
+  }
+  
+  openEditStokModal(id, nama, duriPulo, lainnya);
+}
 
 // ===============================
 // UPDATE HEADER DATE & TIME
