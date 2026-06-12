@@ -2195,7 +2195,7 @@ async function saveEditStok() {
   const payload = {
     action: "updateStok",
     id: document.getElementById('modal-stok-id').value.trim(), // ✅ Trim ID
-    stok_duriPulo: Number(document.getElementById('modal-stok-duripulo').value) || 0,
+    stok_duriPulo: Number(document.getElementById('modal-stok-duriPulo').value) || 0,
     stok_lainnya: Number(document.getElementById('modal-stok-lainnya').value) || 0
   };
 
