@@ -354,39 +354,39 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchData(id);
 });
         
-        // ==========================================
-        // AMBIL DATA DARI SERVER
-        // ==========================================
-        async function fetchData(id) {
-            try {
-                const url = `${GOOGLE_SCRIPT_URL}?action=getById&id=${encodeURIComponent(id)}`;
-                console.log("🌐 Fetch URL:", url);
-                
-                const res = await fetch(url);
-                console.log("📡 HTTP Status:", res.status);
-                
-                const text = await res.text();
-                console.log("📦 Raw Response:", text.substring(0, 500));
-                
-                const result = JSON.parse(text);
-                
-                if (result.success && result.data) {
-                    console.log("✅ Data found:", result.data);
-                    // Reset flag jika data dari server masih "Menunggu"
-                    if (result.data.status !== "Disetujui") {
-                        isApproved = false;
-                    }
-                    renderData(result.data);
-                } else {
-                    console.error("❌ Backend returned error:", result.message);
-                    showError(result.message || "Data tidak ditemukan");
-                }
-            } catch (err) {
-                console.error("💥 Exception:", err);
-                showError("Error: " + err.message);
+       // ==========================================
+// AMBIL DATA DARI SERVER
+// ==========================================
+async function fetchData(id) {
+    // ✅ RESET STATE SAAT FETCH DATA BARU (PENTING!)
+    optimisticApproved = false;
+    isSyncing = false;
+    
+    try {
+        const url = `${GOOGLE_SCRIPT_URL}?action=getById&id=${encodeURIComponent(id)}`;
+        console.log("🌐 Fetch URL:", url);
+        const res = await fetch(url);
+        console.log("📡 HTTP Status:", res.status);
+        const text = await res.text();
+        console.log("📦 Raw Response:", text.substring(0, 500));
+        const result = JSON.parse(text);
+        if (result.success && result.data) {
+            console.log("✅ Data found:", result.data);
+            // Reset flag jika data dari server masih "Menunggu"
+            if (result.data.status !== "Disetujui") {
+                isApproved = false;
             }
+            renderData(result.data);
+        } else {
+            console.error("❌ Backend returned error:", result.message);
+            showError(result.message || "Data tidak ditemukan");
         }
-
+    } catch (err) {
+        console.error("💥 Exception:", err);
+        showError("Error: " + err.message);
+    }
+}
+        
         // ==========
         // RENDER UI
         // ==========
