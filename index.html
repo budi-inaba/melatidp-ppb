@@ -1160,20 +1160,32 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
 document.getElementById('input-kelurahan')
   .addEventListener('input', debounce(loadStokKomoditasForForm, 300));
 
-    document.addEventListener('click', function(e) {
-      const card = e.target.closest('.stok-card-click');
-      if (!card) return;
-      
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const id       = card.dataset.stokId;
-      const nama     = card.dataset.stokNama;
-      const duriPulo = Number(card.dataset.stokDuri) || 0;
-      const lainnya  = Number(card.dataset.stokLain) || 0;
-      
-      openEditStokModal(id, nama, duriPulo, lainnya);
-    });
+    // Event delegation untuk klik card stok (dengan debug)
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.stok-card-click');
+  if (!card) return;
+  
+  e.preventDefault();
+  e.stopPropagation();
+  
+  // Ambil data dari attributes
+  const id       = card.getAttribute('data-stok-id');
+  const nama     = card.getAttribute('data-stok-nama');
+  const duriPulo = Number(card.getAttribute('data-stok-duri')) || 0;
+  const lainnya  = Number(card.getAttribute('data-stok-lain')) || 0;
+  
+  // Debug log
+  console.log('📦 Card clicked:', { id, nama, duriPulo, lainnya });
+  
+  // Validasi ID
+  if (!id) {
+    console.error('❌ ID tidak ditemukan di card:', card);
+    showToast('ID komoditas tidak ditemukan', 'error');
+    return;
+  }
+  
+  openEditStokModal(id, nama, duriPulo, lainnya);
+});
     
 });
 
