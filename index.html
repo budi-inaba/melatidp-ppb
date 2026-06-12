@@ -1160,6 +1160,21 @@ document.getElementById('input-atm').addEventListener('input', debounce(cekATM, 
 document.getElementById('input-kelurahan')
   .addEventListener('input', debounce(loadStokKomoditasForForm, 300));
 
+    document.addEventListener('click', function(e) {
+      const card = e.target.closest('.stok-card-click');
+      if (!card) return;
+      
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const id       = card.dataset.stokId;
+      const nama     = card.dataset.stokNama;
+      const duriPulo = Number(card.dataset.stokDuri) || 0;
+      const lainnya  = Number(card.dataset.stokLain) || 0;
+      
+      openEditStokModal(id, nama, duriPulo, lainnya);
+    });
+    
 });
 
 
