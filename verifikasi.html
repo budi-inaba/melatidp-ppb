@@ -747,28 +747,40 @@ async function fetchData(id) {
         });
 
         function processScannedURLReal(url) {
-          console.log("🔗 URL dari QR (setelah login):", url);
-          try {
-            const urlObj = new URL(url);
-            const id = urlObj.searchParams.get("id");
-            if (id) {
-              console.log("✅ ID ditemukan:", id);
-              currentId = id;
-              fetchData(id);
-            } else {
-              alert("ID tidak ditemukan dalam QR Code");
-            }
-          } catch (e) {
-            const match = url.match(/[?&]id=([^&]+)/);
-            if (match && match[1]) {
-              currentId = match[1];
-              fetchData(match[1]);
-            } else {
-              alert("Format QR Code tidak valid");
-            }
-          }
+    console.log("🔗 URL dari QR (setelah login):", url);
+    try {
+        const urlObj = new URL(url);
+        const id = urlObj.searchParams.get("id");
+        if (id) {
+            console.log("✅ ID ditemukan:", id);
+            currentId = id;
+            
+            // ✅ RESET STATE SAAT SCAN QR BARU (PENTING!)
+            optimisticApproved = false;
+            isApproved = false;
+            isSyncing = false;
+            
+            fetchData(id);
+        } else {
+            alert("ID tidak ditemukan dalam QR Code");
         }
-
+    } catch (e) {
+        const match = url.match(/[?&]id=([^&]+)/);
+        if (match && match[1]) {
+            currentId = match[1];
+            
+            // ✅ RESET STATE SAAT SCAN QR BARU (PENTING!)
+            optimisticApproved = false;
+            isApproved = false;
+            isSyncing = false;
+            
+            fetchData(match[1]);
+        } else {
+            alert("Format QR Code tidak valid");
+        }
+    }
+}
+        
         // ==========================================
         // TOAST NOTIFICATION
         // ==========================================
