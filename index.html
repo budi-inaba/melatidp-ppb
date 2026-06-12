@@ -2191,9 +2191,11 @@ async function saveEditStok() {
     return;
   }
 
+  // ✅ PERBAIKAN: Kirim ID, nama, DAN stok_duriPulo/stok_lainnya
   const payload = {
     action: "updateStok",
-    id: id || nama, // ✅ Gunakan nama jika ID kosong
+    id: id,           // ✅ Kirim ID asli (bisa kosong)
+    nama: nama,       // ✅ TAMBAHKAN: nama komoditas sebagai fallback
     stok_duriPulo: Number(document.getElementById('modal-stok-duriPulo').value) || 0,
     stok_lainnya: Number(document.getElementById('modal-stok-lainnya').value) || 0
   };
