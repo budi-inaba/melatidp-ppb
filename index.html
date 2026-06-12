@@ -2105,17 +2105,52 @@ rt
 // MODAL EDIT STOK KOMODITAS
 // ===============================
 function openEditStokModal(id, nama, duriPulo, lainnya) {
-  document.getElementById('modal-stok-id').value = id;
-  document.getElementById('modal-nama-asli').value = nama;
-  document.getElementById('modal-nama-komoditas').textContent = nama;
-  document.getElementById('modal-stok-duripulo').value = duriPulo;
-  document.getElementById('modal-stok-lainnya').value = lainnya;
-  
-  const modal = document.getElementById('edit-stok-modal');
-  modal.classList.remove('hidden');
-  lucide.createIcons();
-  
-  setTimeout(() => document.getElementById('modal-stok-duriPulo').focus(), 100);
+  try {
+    // Set nilai input
+    const elId       = document.getElementById('modal-stok-id');
+    const elNamaAsli = document.getElementById('modal-nama-asli');
+    const elNamaText = document.getElementById('modal-nama-komoditas');
+    const elDuriPulo = document.getElementById('modal-stok-duripulo'); 
+    const elLainnya  = document.getElementById('modal-stok-lainnya');
+
+    if (!elId || !elDuriPulo || !elLainnya) {
+      console.error('❌ Elemen modal tidak ditemukan');
+      showToast('Modal tidak tersedia', 'error');
+      return;
+    }
+
+    elId.value       = id || '';
+    elNamaAsli.value = nama || '';
+    elNamaText.textContent = nama || '';
+    elDuriPulo.value = Number(duriPulo) || 0;
+    elLainnya.value  = Number(lainnya) || 0;
+
+    // Tampilkan modal
+    const modal = document.getElementById('edit-stok-modal');
+    modal.classList.remove('hidden');
+    
+    // Animasi masuk (smooth di mobile)
+    setTimeout(() => {
+      const panel = document.getElementById('edit-stok-panel');
+      if (panel) panel.style.transform = 'scale(1)';
+    }, 10);
+
+    lucide.createIcons();
+
+    // ✅ FOCUS DENGAN NULL CHECK (PENTING!)
+    setTimeout(() => {
+      if (elDuriPulo && typeof elDuriPulo.focus === 'function') {
+        // Di mobile, hindari auto-focus yang memunculkan keyboard tiba-tiba
+        if (window.innerWidth > 768) {
+          elDuriPulo.focus();
+        }
+      }
+    }, 150);
+
+  } catch (err) {
+    console.error('❌ Error buka modal:', err);
+    showToast('Gagal membuka modal edit', 'error');
+  }
 }
 
 function closeEditStokModal() {
