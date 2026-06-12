@@ -498,6 +498,8 @@ function renderStokDashboard(stokData) {
 function generateTableRows(stokData) {
   let rows = '';
   Object.entries(stokData).forEach(([nama, data]) => {
+      console.log('📦 Data komoditas:', { nama, data }); // ✅ DEBUG LOG
+  console.log('📦 ID:', data.id); // ✅ DEBUG LOG
     const duriPulo = Number(data.duriPulo) || 0;
     const lainnya = Number(data.lainnya) || 0;
     const total = duriPulo + lainnya;
