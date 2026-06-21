@@ -318,16 +318,16 @@
     <div id="toast-container" class="fixed top-4 right-4 z-[11000] space-y-2 pointer-events-none"></div>
     
     <script>
-        // =======================
-        // KONFIGURASI URL BACKEND
-        // =======================
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJkteoDMC1_9H66NGJ0nyuEv0H7MSQUzLBVP9FHncaMvbheI0e1gTlQSFtke06bfoPEg/exec";
-        
-        let currentId = "";
-        let pendingApprovalId = null;
-        let isApproved = false; // Flag untuk tracking status approval
-        let optimisticApproved = false;  // ✨ Baru: flag untuk optimistic UI
-        let isSyncing = false;         
+// =======================
+// KONFIGURASI URL BACKEND
+// =======================
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeKHvB-p7LCtCPX-kgHa68raMhnMbMYS4Qvz6xZKnBOiXgbv-gZm163SoqAykIMuSYZA/exec";
+let currentId = "";
+let pendingApprovalId = null;
+let isApproved = false; 
+let optimisticApproved = false;  
+let isSyncing = false;
+let scannedURL = null;
 
 // ==========================================
 // INISIALISASI
@@ -337,48 +337,71 @@ document.addEventListener('DOMContentLoaded', () => {
     optimisticApproved = false;
     isSyncing = false;
     isApproved = false;
-    
+
     console.log("🔍 Full URL:", window.location.href);
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
     console.log("🔍 ID extracted:", id);
-    
+
     if (!id) {
         console.error("❌ ID tidak ditemukan!");
         showError("ID Pendaftaran tidak ditemukan di URL");
         return;
     }
-    
-    console.log("✅ ID valid, memulai fetch data...");
+
     currentId = id;
-    fetchData(id);
+
+    // 🔐 PENTING: Tampilkan modal password sebelum mengambil data
+    // Ini memastikan siapa pun yang mengakses URL ini (via Google Lens, dll)
+    // harus memasukkan password petugas terlebih dahulu.
+    showLoginModal();
 });
-        
-       // ==========================================
+
+// ==========================================
+// ✨ FUNGSI BARU: TAMPILKAN MODAL LOGIN
+// ==========================================
+function showLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+
+    const passwordInput = document.getElementById('petugas-password');
+    if (passwordInput) {
+        passwordInput.value = '';
+        // Hindari auto-focus di mobile agar keyboard tidak muncul tiba-tiba
+        if (window.innerWidth > 768) {
+            passwordInput.focus();
+        }
+    }
+
+    // Reset error state
+    const errorMsg = document.getElementById('login-error');
+    if (errorMsg) errorMsg.classList.add('hidden');
+    const input = document.getElementById('petugas-password');
+    if (input) input.classList.remove('input-error');
+
+    lucide.createIcons();
+}
+
+// ==========================================
 // AMBIL DATA DARI SERVER
 // ==========================================
 async function fetchData(id) {
-    // ✅ RESET STATE SAAT FETCH DATA BARU (PENTING!)
     optimisticApproved = false;
     isSyncing = false;
-    
     try {
         const url = `${GOOGLE_SCRIPT_URL}?action=getById&id=${encodeURIComponent(id)}`;
         console.log("🌐 Fetch URL:", url);
         const res = await fetch(url);
-        console.log("📡 HTTP Status:", res.status);
         const text = await res.text();
-        console.log("📦 Raw Response:", text.substring(0, 500));
         const result = JSON.parse(text);
+
         if (result.success && result.data) {
-            console.log("✅ Data found:", result.data);
-            // Reset flag jika data dari server masih "Menunggu"
             if (result.data.status !== "Disetujui") {
                 isApproved = false;
             }
             renderData(result.data);
         } else {
-            console.error("❌ Backend returned error:", result.message);
             showError(result.message || "Data tidak ditemukan");
         }
     } catch (err) {
@@ -386,229 +409,155 @@ async function fetchData(id) {
         showError("Error: " + err.message);
     }
 }
-        
-        // ==========
-        // RENDER UI
-        // ==========
-        function renderData(data) {
-             if (optimisticApproved && isSyncing) {
-        console.log("⏳ Skipping render - masih dalam mode optimistic");
-        return;
-    }
-            document.getElementById('loading-state').classList.add('hidden');
-            document.getElementById('content-state').classList.remove('hidden');
-            document.getElementById('error-state').classList.add('hidden');
 
-            document.getElementById('detail-waktu').textContent = data.waktu || "-";
-            document.getElementById('detail-id').textContent = data.id || "-";
-            document.getElementById('detail-kk').textContent = data.kk || "-";
-            document.getElementById('detail-kelurahan').textContent = data.kelurahan || "-";
-            document.getElementById('detail-nama').textContent = data.nama || "-";
-            document.getElementById('detail-kategori').textContent = data.kategori || "-";
-            document.getElementById('detail-produk').textContent = data.produk || "-";
+// ==========
+// RENDER UI
+// ==========
+function renderData(data) {
+    if (optimisticApproved && isSyncing) return;
 
-            const status = data.status;
-            const badge = document.getElementById('badge-status');
-            const statusText = document.getElementById('status-text');
-            const iconContainer = document.getElementById('status-icon-container');
-            const btnApprove = document.getElementById('btn-approve');
-            const actionButtons = document.getElementById('action-buttons');
+    document.getElementById('loading-state').classList.add('hidden');
+    document.getElementById('content-state').classList.remove('hidden');
+    document.getElementById('error-state').classList.add('hidden');
 
-            if (optimisticApproved || status === "Disetujui") {
-                // ✨ TAMPILAN DATA VALID
-                statusText.textContent = "DATA VALID";
-                statusText.className = "text-xl font-bold text-emerald-600 uppercase tracking-wide transition-colors duration-300";
-                
-                iconContainer.className = "w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 bg-emerald-100 shadow-inner transition-all duration-300";
-                iconContainer.innerHTML = '<i data-lucide="check" class="w-12 h-12 text-emerald-600 stroke-[3.5]"></i>';
-                
-                badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 shadow-sm transition-all duration-300";
-                badge.textContent = "✓ Disetujui";
-                
-                // Sembunyikan tombol approve, tampilkan hanya scan QR
-                if (btnApprove) btnApprove.classList.add('hidden');
-                if (actionButtons) {
-                    actionButtons.innerHTML = `
-                        <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
-                            <i data-lucide="qr-code" class="w-5 h-5"></i>
-                            <span>SCAN QR CODE</span>
-                        </button>
-                    `;
-                }
-                
-                // Trigger confetti hanya jika baru pertama kali approved
-                if (!isApproved) {
+    document.getElementById('detail-waktu').textContent = data.waktu || "-";
+    document.getElementById('detail-id').textContent = data.id || "-";
+    document.getElementById('detail-kk').textContent = data.kk || "-";
+    document.getElementById('detail-kelurahan').textContent = data.kelurahan || "-";
+    document.getElementById('detail-nama').textContent = data.nama || "-";
+    document.getElementById('detail-kategori').textContent = data.kategori || "-";
+    document.getElementById('detail-produk').textContent = data.produk || "-";
+
+    const status = data.status;
+    const badge = document.getElementById('badge-status');
+    const statusText = document.getElementById('status-text');
+    const iconContainer = document.getElementById('status-icon-container');
+    const btnApprove = document.getElementById('btn-approve');
+    const actionButtons = document.getElementById('action-buttons');
+
+    if (optimisticApproved || status === "Disetujui") {
+        statusText.textContent = "DATA VALID";
+        statusText.className = "text-xl font-bold text-emerald-600 uppercase tracking-wide transition-colors duration-300";
+        iconContainer.className = "w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 bg-emerald-100 shadow-inner transition-all duration-300";
+        iconContainer.innerHTML = '<i data-lucide="check" class="w-12 h-12 text-emerald-600 stroke-[3.5]"></i>';
+        badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 shadow-sm transition-all duration-300";
+        badge.textContent = "✓ Disetujui";
+
+        if (btnApprove) btnApprove.classList.add('hidden');
+        if (actionButtons) {
+            actionButtons.innerHTML = `
+                <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
+                    <i data-lucide="qr-code" class="w-5 h-5"></i>
+                    <span>SCAN QR CODE</span>
+                </button>
+            `;
+        }
+
+        if (!isApproved) {
             triggerConfetti();
             isApproved = true;
         }
-                
-            } else {
-                // ✨ TAMPILAN MENUNGGU VERIFIKASI
-                optimisticApproved = false;
-                statusText.textContent = "MENUNGGU VERIFIKASI";
-                statusText.className = "text-lg font-bold text-amber-500 uppercase tracking-wide transition-colors duration-300";
-                
-                iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 bg-gray-50 transition-all duration-300";
-                iconContainer.innerHTML = '<i data-lucide="clock" class="w-8 h-8 text-amber-500"></i>';
-                
-                badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 transition-all duration-300";
-                badge.textContent = "Menunggu";
-                
-                if (btnApprove) btnApprove.classList.remove('hidden');
-                if (actionButtons) {
-                    actionButtons.innerHTML = `
-                        <button id="btn-approve" onclick="approveData()" class="w-full neon-green text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
-                            <i data-lucide="check-circle" class="w-5 h-5"></i>
-                            <span>SETUJUI PENDAFTARAN</span>
-                        </button>
-                        <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
-                            <i data-lucide="qr-code" class="w-5 h-5"></i>
-                            <span>SCAN QR CODE</span>
-                        </button>
-                    `;
-                }
-            }
-            lucide.createIcons();
-        }
-        
-        // ==========================================
-        // ✨ FUNGSI UPDATE STATUS LANGSUNG (OPTIMISTIC UI)
-        // ==========================================
-        function updateStatusToValid() {
-            const statusText = document.getElementById('status-text');
-            const iconContainer = document.getElementById('status-icon-container');
-            const badge = document.getElementById('badge-status');
-            const btnApprove = document.getElementById('btn-approve');
-            const actionButtons = document.getElementById('action-buttons');
-            
-            // ✨ Update teks status
-            statusText.textContent = "DATA VALID";
-            statusText.className = "text-xl font-bold text-emerald-600 uppercase tracking-wide transition-colors duration-300";
-            
-            // ✨ Update icon dengan animasi
-            iconContainer.className = "w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 bg-emerald-100 shadow-inner transition-all duration-300";
-            iconContainer.innerHTML = '<i data-lucide="check" class="w-12 h-12 text-emerald-600 stroke-[3.5]"></i>';
-            
-            // ✨ Update badge
-            badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 shadow-sm transition-all duration-300";
-            badge.textContent = "✓ Disetujui";
-            
-            // ✨ Sembunyikan tombol approve
-            if (btnApprove) btnApprove.classList.add('hidden');
-            
-            // ✨ Update action buttons (hanya tampilkan scan QR)
-            if (actionButtons) {
-                actionButtons.innerHTML = `
-                    <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
-                        <i data-lucide="qr-code" class="w-5 h-5"></i>
-                        <span>SCAN QR CODE</span>
-                    </button>
-                `;
-            }
-            
-            // ✨ Trigger confetti
-            triggerConfetti();
-            
-            // ✨ Re-render icons
-            lucide.createIcons();
-        }
-        
-        // ==========================================
-        // FUNGSI APPROVE DENGAN MODAL KONFIRMASI
-        // ==========================================
-        function approveData() {
-            showConfirmApproveModal();
-        }
+    } else {
+        optimisticApproved = false;
+        statusText.textContent = "MENUNGGU VERIFIKASI";
+        statusText.className = "text-lg font-bold text-amber-500 uppercase tracking-wide transition-colors duration-300";
+        iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 bg-gray-50 transition-all duration-300";
+        iconContainer.innerHTML = '<i data-lucide="clock" class="w-8 h-8 text-amber-500"></i>';
+        badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 transition-all duration-300";
+        badge.textContent = "Menunggu";
 
-        function showConfirmApproveModal() {
-            // Isi data ke dalam modal konfirmasi
-            document.getElementById('confirm-nama').textContent = document.getElementById('detail-nama').textContent;
-            document.getElementById('confirm-kk').textContent = document.getElementById('detail-kk').textContent;
-            document.getElementById('confirm-kategori').textContent = document.getElementById('detail-kategori').textContent;
-            document.getElementById('confirm-produk').textContent = document.getElementById('detail-produk').textContent;
-            
-            pendingApprovalId = currentId;
-            
-            const modal = document.getElementById('confirm-approve-modal');
-            modal.classList.remove('hidden');
-            lucide.createIcons();
-            
-            // ESC key handler
-            const handleEsc = (e) => {
-                if (e.key === 'Escape') {
-                    closeConfirmModal();
-                    document.removeEventListener('keydown', handleEsc);
-                }
-            };
-            document.addEventListener('keydown', handleEsc);
+        if (btnApprove) btnApprove.classList.remove('hidden');
+        if (actionButtons) {
+            actionButtons.innerHTML = `
+                <button id="btn-approve" onclick="approveData()" class="w-full neon-green text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    <span>SETUJUI PENDAFTARAN</span>
+                </button>
+                <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
+                    <i data-lucide="qr-code" class="w-5 h-5"></i>
+                    <span>SCAN QR CODE</span>
+                </button>
+            `;
         }
-
-        function closeConfirmModal() {
-            document.getElementById('confirm-approve-modal').classList.add('hidden');
-            pendingApprovalId = null;
-        }
-
-        async function executeApprove() {
-    if (!pendingApprovalId) {
-        closeConfirmModal();
-        return;
     }
-    
+    lucide.createIcons();
+}
+
+function updateStatusToValid() {
+    const statusText = document.getElementById('status-text');
+    const iconContainer = document.getElementById('status-icon-container');
+    const badge = document.getElementById('badge-status');
+    const btnApprove = document.getElementById('btn-approve');
+    const actionButtons = document.getElementById('action-buttons');
+
+    statusText.textContent = "DATA VALID";
+    statusText.className = "text-xl font-bold text-emerald-600 uppercase tracking-wide transition-colors duration-300";
+    iconContainer.className = "w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 bg-emerald-100 shadow-inner transition-all duration-300";
+    iconContainer.innerHTML = '<i data-lucide="check" class="w-12 h-12 text-emerald-600 stroke-[3.5]"></i>';
+    badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 shadow-sm transition-all duration-300";
+    badge.textContent = "✓ Disetujui";
+
+    if (btnApprove) btnApprove.classList.add('hidden');
+    if (actionButtons) {
+        actionButtons.innerHTML = `
+            <button onclick="openScanner()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow flex items-center justify-center gap-2 transition-all active:scale-95">
+                <i data-lucide="qr-code" class="w-5 h-5"></i>
+                <span>SCAN QR CODE</span>
+            </button>
+        `;
+    }
+    triggerConfetti();
+    lucide.createIcons();
+}
+
+// ==========================================
+// FUNGSI APPROVE DENGAN MODAL KONFIRMASI
+// ==========================================
+function approveData() { showConfirmApproveModal(); }
+
+function showConfirmApproveModal() {
+    document.getElementById('confirm-nama').textContent = document.getElementById('detail-nama').textContent;
+    document.getElementById('confirm-kk').textContent = document.getElementById('detail-kk').textContent;
+    document.getElementById('confirm-kategori').textContent = document.getElementById('detail-kategori').textContent;
+    document.getElementById('confirm-produk').textContent = document.getElementById('detail-produk').textContent;
+    pendingApprovalId = currentId;
+    document.getElementById('confirm-approve-modal').classList.remove('hidden');
+    lucide.createIcons();
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirm-approve-modal').classList.add('hidden');
+    pendingApprovalId = null;
+}
+
+async function executeApprove() {
+    if (!pendingApprovalId) { closeConfirmModal(); return; }
     const btn = document.getElementById('btn-confirm-approve');
     const originalBtnContent = btn.innerHTML;
-    
-    // Loading state
     btn.disabled = true;
     btn.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> Memproses...`;
-    
+
     try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
-            body: JSON.stringify({ 
-                action: "approve", 
-                id: pendingApprovalId,
-                timestamp: new Date().toISOString()
-            })
+            body: JSON.stringify({ action: "approve", id: pendingApprovalId, timestamp: new Date().toISOString() })
         });
-        
-        console.log("📡 Response status:", res.status);
         const responseText = await res.text();
-        console.log("📦 Raw response:", responseText);
-        
-        let result;
-        try {
-            result = JSON.parse(responseText);
-        } catch (e) {
-            throw new Error("Response bukan JSON valid: " + responseText.substring(0, 100));
-        }
-        
+        let result = JSON.parse(responseText);
+
         if (result.success) {
-            // ✨ OPTIMISTIC UI: Update langsung
             optimisticApproved = true;
             isApproved = true;
             updateStatusToValid();
-            
             closeConfirmModal();
             showToast("✅ Pendaftaran berhasil disetujui!", "success");
-            
-            // ✨ SYNC KE BACKEND DENGAN DELAY (hindari race condition)
             isSyncing = true;
-            setTimeout(() => {
-                fetchData(pendingApprovalId);
-                isSyncing = false;
-            }, 1500); // Delay 1.5 detik biar backend sempat update
-            
+            setTimeout(() => { fetchData(pendingApprovalId); isSyncing = false; }, 1500);
         } else {
             throw new Error(result.message || "Gagal memproses persetujuan");
         }
     } catch (err) {
-        console.error("❌ Error approve:", err);
-        
-        if (err.message.includes("Failed to fetch")) {
-            showToast("⚠️ Koneksi gagal. Cek CORS / URL / Deploy script", "error");
-        } else {
-            showToast("⚠️ " + err.message, "error");
-        }
+        showToast("⚠️ " + err.message, "error");
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalBtnContent;
@@ -616,150 +565,120 @@ async function fetchData(id) {
         lucide.createIcons();
     }
 }
-        
-        function showError(msg) {
-    // ✨ Jangan tampilkan error jika dalam mode optimistic approved
-    if (optimisticApproved) {
-        console.log("⚠️ Error ignored - dalam mode optimistic:", msg);
-        return;
-    }
-    
+
+function showError(msg) {
+    if (optimisticApproved) return;
     document.getElementById('loading-state').classList.add('hidden');
-    document.getElementById('content-state').classList.add('hidden'); // ✨ Hide content
+    document.getElementById('content-state').classList.add('hidden');
     document.getElementById('error-state').classList.remove('hidden');
     document.getElementById('error-msg').textContent = msg;
 }
 
-        function triggerConfetti() {
-            confetti({ 
-                particleCount: 100, 
-                spread: 70, 
-                origin: { y: 0.6 },
-                colors: ['#10b981', '#3b82f6', '#fbbf24']
-            });
-        }
+function triggerConfetti() {
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#10b981', '#3b82f6', '#fbbf24'] });
+}
 
-        // ==========================================
-        // FUNGSI SCANNER
-        // ==========================================
-        let html5QrCode = null;
+// ==========================================
+// FUNGSI SCANNER
+// ==========================================
+let html5QrCode = null;
+function openScanner() {
+    document.getElementById('scanner-modal').classList.remove('hidden');
+    html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => { closeScanner(); processScannedURL(decodedText); },
+        (errorMessage) => {}
+    ).catch(err => {
+        alert("Gagal mengakses kamera. Pastikan izin kamera diaktifkan.");
+        closeScanner();
+    });
+    lucide.createIcons();
+}
 
-        function openScanner() {
-          document.getElementById('scanner-modal').classList.remove('hidden');
-          html5QrCode = new Html5Qrcode("qr-reader");
-          
-          html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            (decodedText) => {
-              closeScanner();
-              processScannedURL(decodedText);
-            },
-            (errorMessage) => {}
-          ).catch(err => {
-            console.error("Gagal mulai scanner:", err);
-            alert("Gagal mengakses kamera. Pastikan izin kamera diaktifkan.");
-            closeScanner();
-          });
-          lucide.createIcons();
-        }
+function closeScanner() {
+    document.getElementById('scanner-modal').classList.add('hidden');
+    if (html5QrCode) { html5QrCode.stop().catch(err => console.error(err)); html5QrCode = null; }
+}
 
-        function closeScanner() {
-          document.getElementById('scanner-modal').classList.add('hidden');
-          if (html5QrCode) {
-            html5QrCode.stop().catch(err => console.error(err));
-            html5QrCode = null;
-          }
-        }
+function processScannedURL(url) {
+    console.log("🔗 [DEBUG] QR Scanned:", url);
+    showPetugasLogin(url);
+}
 
-        function processScannedURL(url) {
-          console.log("🔗 [DEBUG] QR Scanned:", url);
-          showPetugasLogin(url);
-        }
-        
-        // ==========================================
-        // FUNGSI LOGIN PETUGAS
-        // ==========================================
-        let scannedURL = null;
+// ==========================================
+// FUNGSI LOGIN PETUGAS (SUDAH DIPERBAIKI)
+// ==========================================
+function showPetugasLogin(url) {
+    try {
+        console.log("🔐 [DEBUG] showPetugasLogin dipanggil dengan URL:", url);
+        scannedURL = url;
+        showLoginModal(); // Gunakan fungsi modal yang sama
+    } catch (err) {
+        console.error("💥 Error di showPetugasLogin:", err);
+        alert("Gagal menampilkan login: " + err.message);
+    }
+}
 
-        function showPetugasLogin(url) {
-          try {
-            console.log("🔐 [DEBUG] showPetugasLogin dipanggil dengan URL:", url);
-            scannedURL = url;
-            const modal = document.getElementById('login-modal');
-            if (!modal) throw new Error("Modal element not found");
-            modal.classList.remove('hidden');
-            const passwordInput = document.getElementById('petugas-password');
-            if (!passwordInput) throw new Error("Password input not found");
-            passwordInput.value = '';
-            passwordInput.focus();
-            lucide.createIcons();
-          } catch (err) {
-            console.error("💥 Error di showPetugasLogin:", err);
-            alert("Gagal menampilkan login: " + err.message);
-          }
-        }
-        
-        function togglePetugasPassword() {
-          const input = document.getElementById('petugas-password');
-          const icon = document.getElementById('icon-petugas-eye');
-          if (input.type === 'password') {
-            input.type = 'text';
-            icon.setAttribute('data-lucide', 'eye-off');
-          } else {
-            input.type = 'password';
-            icon.setAttribute('data-lucide', 'eye');
-          }
-          lucide.createIcons();
-        }
+function togglePetugasPassword() {
+    const input = document.getElementById('petugas-password');
+    const icon = document.getElementById('icon-petugas-eye');
+    if (input.type === 'password') { input.type = 'text'; icon.setAttribute('data-lucide', 'eye-off'); } 
+    else { input.type = 'password'; icon.setAttribute('data-lucide', 'eye'); }
+    lucide.createIcons();
+}
 
-        function verifyPetugasPassword() {
-          const password = document.getElementById('petugas-password').value.trim();
-          const errorMsg = document.getElementById('login-error');
-          const input = document.getElementById('petugas-password');
-          
-          if (password.toUpperCase() === 'x') {
-            errorMsg.classList.add('hidden');
-            input.classList.remove('input-error');
-            document.getElementById('login-modal').classList.add('hidden');
-            if (scannedURL) {
-              processScannedURLReal(scannedURL);
-              scannedURL = null;
-            }
-          } else {
-            errorMsg.classList.remove('hidden');
-            input.classList.add('input-error');
-            const modal = document.querySelector('#login-modal .bg-white');
+function verifyPetugasPassword() {
+    const password = document.getElementById('petugas-password').value.trim();
+    const errorMsg = document.getElementById('login-error');
+    const input = document.getElementById('petugas-password');
+
+    if (password.toUpperCase() === 'PPB') {
+        errorMsg.classList.add('hidden');
+        input.classList.remove('input-error');
+        document.getElementById('login-modal').classList.add('hidden');
+
+        if (scannedURL) {
+            // Jika dipanggil dari internal scanner
+            processScannedURLReal(scannedURL);
+            scannedURL = null;
+        } else if (currentId) {
+            // ✨ Jika dipanggil dari page load (akses langsung / Google Lens)
+            fetchData(currentId);
+        }
+    } else {
+        errorMsg.classList.remove('hidden');
+        input.classList.add('input-error');
+        const modal = document.querySelector('#login-modal .bg-white');
+        if (modal) {
             modal.classList.add('shake');
             setTimeout(() => modal.classList.remove('shake'), 300);
-            input.focus();
-            input.select();
-          }
         }
+        input.focus();
+        input.select();
+    }
+}
 
-        document.addEventListener('DOMContentLoaded', () => {
-          const passwordInput = document.getElementById('petugas-password');
-          if (passwordInput) {
-            passwordInput.addEventListener('keypress', (e) => {
-              if (e.key === 'Enter') verifyPetugasPassword();
-            });
-          }
+document.addEventListener('DOMContentLoaded', () => {
+    const passwordInput = document.getElementById('petugas-password');
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyPetugasPassword();
         });
+    }
+});
 
-        function processScannedURLReal(url) {
+function processScannedURLReal(url) {
     console.log("🔗 URL dari QR (setelah login):", url);
     try {
         const urlObj = new URL(url);
         const id = urlObj.searchParams.get("id");
         if (id) {
-            console.log("✅ ID ditemukan:", id);
             currentId = id;
-            
-            // ✅ RESET STATE SAAT SCAN QR BARU (PENTING!)
             optimisticApproved = false;
             isApproved = false;
             isSyncing = false;
-            
             fetchData(id);
         } else {
             alert("ID tidak ditemukan dalam QR Code");
@@ -768,53 +687,45 @@ async function fetchData(id) {
         const match = url.match(/[?&]id=([^&]+)/);
         if (match && match[1]) {
             currentId = match[1];
-            
-            // ✅ RESET STATE SAAT SCAN QR BARU (PENTING!)
             optimisticApproved = false;
             isApproved = false;
             isSyncing = false;
-            
             fetchData(match[1]);
         } else {
             alert("Format QR Code tidak valid");
         }
     }
 }
-        
-        // ==========================================
-        // TOAST NOTIFICATION
-        // ==========================================
-        function showToast(msg, type = 'success') {
-            let container = document.getElementById('toast-container');
-            if (!container) {
-                container = document.createElement('div');
-                container.id = 'toast-container';
-                container.className = 'fixed top-4 right-4 z-[11000] space-y-2 pointer-events-none';
-                document.body.appendChild(container);
-            }
-            
-            const toast = document.createElement('div');
-            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info';
-            const bg = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
-            
-            toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 animate-slideUp pointer-events-auto`;
-            toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i> <span>${msg}</span>`;
-            
-            container.appendChild(toast);
-            lucide.createIcons();
-            
-            setTimeout(() => {
-                toast.style.transition = 'opacity 0.3s, transform 0.3s';
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(20px)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-        
-        // Helper function untuk handle image error
-        function handleImgErrorVerifikasi(img) {
-            img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="%2310b981" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="12" cy="12" r="3"/><path d="M16 8h-4V4"/><path d="M8 16h4v4"/></svg>';
-        }
-    </script>
+
+// ==========================================
+// TOAST NOTIFICATION
+// ==========================================
+function showToast(msg, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed top-4 right-4 z-[11000] space-y-2 pointer-events-none';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info';
+    const bg = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+    toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 animate-slideUp pointer-events-auto`;
+    toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i> <span>${msg}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s, transform 0.3s';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+}
+
+function handleImgErrorVerifikasi(img) {
+    img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="%2310b981" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="12" cy="12" r="3"/><path d="M16 8h-4V4"/><path d="M8 16h4v4"/></svg>';
+}
+</script>
 </body>
 </html>
